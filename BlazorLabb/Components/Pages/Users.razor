@@ -1,5 +1,69 @@
-﻿<h3>User</h3>
+﻿@page "/users"
+@rendermode InteractiveServer
+
+<PageTitle>Users</PageTitle>
+
+<h3>User Data Storage</h3>
+
+@if (loadingNotDone)
+{
+	<p>@loadingMessage</p>
+}
+else
+{
+	List<User> dataList = User.GetUsers();
+	<table class="table">
+		<thead>
+		<tr>
+			<th>Name</th>
+			<th>Email</th>
+			<th>Street</th>
+			<th>City</th>
+			<th>ZipCode</th>
+			<th>Company</th>
+			<th>Company Catchphrase</th>
+		</tr>
+		</thead>
+		<tbody>
+		@foreach (var user in dataList)
+		{
+			<tr>
+				<td>@user.Name</td>
+				<td>@user.Email</td>
+				<td>@user.Address.Street</td>
+				<td>@user.Address.City</td>
+				<td>@user.Address.Zip</td>
+				<td>@user.Company.Name</td>
+				<td>@user.Company.CatchPhrase</td>
+			</tr>
+		}
+		</tbody>
+	</table>
+}
+
 
 @code {
+
+	private string loadingMessage = "Loading";
+	private bool loadingNotDone = true;
+
+	protected override void OnInitialized()
+	{
+		_ = SimulateLoading();
+	}
+
+	private async Task SimulateLoading()
+	{
+		for (int i = 0; i < 5; i++)
+		{
+			await Task.Delay(500); 
+			loadingMessage += ".";
+			StateHasChanged();
+		}
+
+		loadingNotDone = false;
+		StateHasChanged();
+	}
+
 	
 }
