@@ -1,4 +1,6 @@
 ﻿@page "/newuser"
+@using System.Runtime.InteropServices.JavaScript
+@using Microsoft.AspNetCore.Identity
 @attribute [StreamRendering]
 @rendermode InteractiveServer
 <PageTitle>New User</PageTitle>
@@ -6,63 +8,58 @@
 <h1>New User</h1>
 
 <p>Create new user!</p>
-
-@if (userSaved)
+@if (step == 1)
 {
-	<p>User saved!</p>
-	<button class="btn btn-primary" @onclick="ResetForm">Create New User</button>
+	<EditForm Model="@user" OnValidSubmit="NextPage">
+		<DataAnnotationsValidator />
+		<InputText id="Name" placeholder="Enter Name" @bind-Value="user.Name"/>
+		<ValidationMessage For="@(() => user.Name)" />
+		<br/>
+		<InputText id="Email" placeholder="Enter Email" @bind-Value="user.Email" />
+		<ValidationMessage For="@(() => user.Email)" />
+		<br/>
+		<button type="submit">Submit</button>
+	</EditForm>
 }
-
-@if (string.IsNullOrWhiteSpace(inputName) || string.IsNullOrWhiteSpace(inputEmail))
+else if (step == 2)
 {
-	<div>
-	<input type="text" placeholder="Enter Name" @bind="tempName" />
-	<br/>
-	<input type="text" placeholder="Enter Email" @bind="tempEmail" />
-	</div>
-	<button class="btn btn-primary" @onclick="CheckNameFieldsFilledAndSet">Next</button>
-	@if (errorFillMessage)
-	{
-		<p class="text-danger">All fields need to be filled</p>
-	}
 
+	<EditForm Model="@user.Address" OnValidSubmit="NextPage">
+		<DataAnnotationsValidator />
+		<InputText id="Street" placeholder="Enter Street Address" @bind-Value="user.Address.Street" />
+		<ValidationMessage For="@(() => user.Address.Street)" />
+		<br />
+		<InputText id="City" placeholder="Enter City" @bind-Value="user.Address.City" />
+		<ValidationMessage For="@(() => user.Address.City)" />
+		<br />
+		<InputText id="Zip" placeholder="Enter Zip Code" @bind-Value="user.Address.Zip" />
+		<ValidationMessage For="@(() => user.Address.Zip)" />
+		<br />
+		<button type="submit">Submit</button>
+	</EditForm>
 }
-else if (adressCheck)
+else if (step == 3)
 {
-	<div>
-	<input type="text" placeholder="Enter Adress" @bind="tempAdress" />
-	<br/>
-	<input type="text" placeholder="Enter City" @bind="tempCity" />
-	<br/>
-	<input type="text" placeholder="Enter Zip" @bind="tempZip" />
-	</div>
-	<button class="btn btn-primary" @onclick="CheckAdressFieldsFilledAndSet">Next</button>
-	@if (errorFillMessage)
-	{
-		<p class="text-danger">All fields need to be filled</p>
-	}
+	<EditForm Model="@user" OnValidSubmit="FinalSubmit">
+		<DataAnnotationsValidator />
+		<InputText id="Street" placeholder="Enter Company Name" @bind-Value="user.Company.Name" />
+		<ValidationMessage For="@(() => user.Company.Name)" />
+		<br />
+		<InputText id="City" placeholder="Enter Company Catchphrase (Optional)" @bind-Value="user.Company.CatchPhrase" style="width:400px"/>
+		<ValidationMessage For="@(() => user.Company.CatchPhrase)" />
+		<br />
+	
+		<button type="submit">Submit</button>
+	</EditForm>
 }
-else if (companyCheck)
-
+else if (formIsDone)
 {
-	<div>
-	<input type="text" placeholder="Enter Company Name" @bind="tempCompanyName"/>
-	<br/>
-	<input type="text" placeholder="Enter Company Catch Phrase" @bind="tempCompanyCatchPhrase" style="width:400px;"/>
-	</div>
-	<button class="btn btn-primary" @onclick="CheckCompanyFieldsFilledAndSet">Create User</button>
-	@if (errorFillMessage)
-	{
-		<p class="text-danger">All fields need to be filled</p>
-	}
-}
-
-@if (userIsDone)
-{
-	<p>Thank you for creating a new user!</p>
+	userSaved = false;
+	userDeleted = false;
 	<table class="table">
 		<thead>
 		<tr>
+			<th>Randomly Generated User ID</th>
 			<th>Name</th>
 			<th>Email</th>
 			<th>Adress</th>
@@ -74,142 +71,75 @@ else if (companyCheck)
 		</thead>
 		<tbody>
 		<tr>
-			<td>@inputName</td>
-			<td>@inputEmail</td>
-			<td>@inputAdress</td>
-			<td>@inputCity</td>
-			<td>@inputZip</td>
-			<td>@companyName</td>
-			<td>@companyCatchPhrase</td>
+			<td>@user.Id</td>
+			<td>@user.Name</td>
+			<td>@user.Email</td>
+			<td>@user.Address.Street</td>
+			<td>@user.Address.City</td>
+			<td>@user.Address.Zip</td>
+			<td>@user.Company.Name</td>
+			<td>@(user.Company.CatchPhrase ?? "Check your assumptions")</td>
 		</tr>
 
 		</tbody>
 	</table>
-	@if (!userSaved)
-	{
-		<button class="btn btn-primary" @onclick="SaveUser">Save User</button>
-		<button class="btn btn-primary" @onclick="ResetForm">Discard User</button>
-	}
+
+	<button class="btn btn-primary" @onclick="SaveUser">Save User</button>
+	<button class="btn btn-primary" @onclick="DeleteUser">Discard User and Retry</button>
 }
 
-
-
-
-
-
-@code
+@if(userSaved)
 {
-	private string? inputName;
-	private string? tempName;
-	private string? inputEmail;
-	private string? tempEmail;
+	<p style ="color: green; font-weight: bold;">User @user.Name saved!</p>
+}
+@if (userDeleted)
+{
+	<p style="color: red; font-weight: bold;">User @user.Name discarded!</p>
+}
 
-	private string? inputAdress;
-	private string? tempAdress;
-	private string? inputCity;
-	private string? tempCity;
-	private string? inputZip;
-	private string? tempZip;
-
-	private string? companyName;
-	private string? tempCompanyName;
-	private string? companyCatchPhrase;
-	private string? tempCompanyCatchPhrase;
-
-
-	private bool adressCheck = false;
-	private bool companyCheck = false;
-	private bool errorFillMessage = false;
-	private bool userIsDone = false;
+@code {
+	private User user = new();
+	private List<User> users = new();
+	private int step = 1;
+	private bool formIsDone;
 	private bool userSaved = false;
+	private bool userDeleted = false;
 
-	void CheckNameFieldsFilledAndSet()
-	{
-		if (!string.IsNullOrWhiteSpace(tempName) && !string.IsNullOrWhiteSpace(tempEmail))
-		{
-
-			inputName = tempName;
-			inputEmail = tempEmail;
-			adressCheck = true;
-			errorFillMessage = false;
-		}
-		else
-		{
-			errorFillMessage = true;
-		}
-	}
-
-	void CheckAdressFieldsFilledAndSet()
-	{
-		if (!string.IsNullOrWhiteSpace(tempAdress) && !string.IsNullOrWhiteSpace(tempCity) && !string.IsNullOrWhiteSpace(tempZip))
-		{
-			inputAdress = tempAdress;
-			inputCity = tempCity;
-			inputZip = tempZip;
-			companyCheck = true;
-			adressCheck = false;
-			errorFillMessage = false;
-		}
-		else
-		{
-			errorFillMessage = true;
-		}
-	}
-
-	void CheckCompanyFieldsFilledAndSet()
-	{
-		if (!string.IsNullOrWhiteSpace(tempCompanyName) && !string.IsNullOrWhiteSpace(tempCompanyCatchPhrase))
-		{
-			companyName = tempCompanyName;
-			companyCatchPhrase = tempCompanyCatchPhrase;
-			userIsDone = true;
-			companyCheck = false;
-			errorFillMessage = false;
-		}
-		else
-		{
-			errorFillMessage = true;
-		}
-	}
-	void SaveUser()
-	{
-		userSaved = true;
-		ResetTempFields();
-	}
-	void ResetForm()
-	{
-		OnInitialized();
-	}
-	void ResetTempFields()
-	{
-		userSaved = true;
-		tempName = "";
-		tempEmail = "";
-		tempAdress = "";
-		tempCity = "";
-		tempZip = "";
-		tempCompanyName = "";
-		tempCompanyCatchPhrase = "";
-	}
 	protected override void OnInitialized()
 	{
-		ResetTempFields();
-		inputName = "";
-		inputEmail = "";
-		inputAdress = "";
-		inputCity = "";
-		inputZip = "";
-		companyName = "";
-		companyCatchPhrase = "";
-
-		adressCheck = false;
-		companyCheck = false;
-		userIsDone = false;
+		step = 1;
+	}
+	private void NextPage()
+	{
 		userSaved = false;
-		errorFillMessage = false;
+		step++;
+		StateHasChanged();
 	}
 
+	private void FinalSubmit()
+	{
+		formIsDone = true;
+		step = 0;
+	}
+	private void ResetForm()
+	{
+		user = new();
+		step = 1;
+		formIsDone = false;
+	}
 
+	private void DeleteUser()
+	{
+		ResetForm();
+		userDeleted = true;
+	}
+	private void SaveUser()
+	{
+		//Save user to database logic
+		users.Add(user);
+		ResetForm();
+		userSaved = true;
+	}
 
-
+	
 }

@@ -40,6 +40,7 @@ namespace BlazorLabb
 
 	public class Company
 	{
+		[Required(ErrorMessage = "Company Name is required")]
 		public string? Name { get; set; }
 		public string? CatchPhrase { get; set; }
 	}
