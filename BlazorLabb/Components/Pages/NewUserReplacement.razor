@@ -1,0 +1,132 @@
+﻿@page "/newuserrep"
+@using System.Runtime.InteropServices.JavaScript
+@using Microsoft.AspNetCore.Identity
+@attribute [StreamRendering]
+@rendermode InteractiveServer
+<PageTitle>New User</PageTitle>
+
+<h1>New User</h1>
+
+<p>Create new user!</p>
+@if (step == 1)
+{
+	<EditForm Model="@user" OnValidSubmit="NextPage">
+		<DataAnnotationsValidator />
+		<InputText id="Name" placeholder="Enter Name" @bind-Value="user.Name"/>
+		<ValidationMessage For="@(() => user.Name)" />
+		<br/>
+		<InputText id="Email" placeholder="Enter Email" @bind-Value="user.Email" />
+		<ValidationMessage For="@(() => user.Email)" />
+		<br/>
+		<button type="submit">Submit</button>
+	</EditForm>
+}
+else if (step == 2)
+{
+
+	<EditForm Model="@user" OnValidSubmit="NextPage">
+		<DataAnnotationsValidator />
+		<InputText id="Street" placeholder="Enter Street Address" @bind-Value="user.Address.Street" />
+		<ValidationMessage For="@(() => user.Address.Street)" />
+		<br />
+		<InputText id="City" placeholder="Enter City" @bind-Value="user.Address.City" />
+		<ValidationMessage For="@(() => user.Address.City)" />
+		<br />
+		<InputText id="Zip" placeholder="Enter Zip Code" @bind-Value="user.Address.Zip" />
+		<ValidationMessage For="@(() => user.Address.Zip)" />
+		<br />
+		<button type="submit">Submit</button>
+	</EditForm>
+}
+else if (step == 3)
+{
+	<EditForm Model="@user" OnValidSubmit="FinalSubmit">
+		<DataAnnotationsValidator />
+		<InputText id="Street" placeholder="Enter Company Name" @bind-Value="user.Company.Name" />
+		<ValidationMessage For="@(() => user.Company.Name)" />
+		<br />
+		<InputText id="City" placeholder="Enter Company Catchphrase" @bind-Value="user.Company.CatchPhrase" style="width:400px"/>
+		<ValidationMessage For="@(() => user.Company.CatchPhrase)" />
+		<br />
+	
+		<button type="submit">Submit</button>
+	</EditForm>
+}
+else if (formIsDone)
+{
+	<table class="table">
+		<thead>
+		<tr>
+			<th>Randomly Generated User ID</th>
+			<th>Name</th>
+			<th>Email</th>
+			<th>Adress</th>
+			<th>City</th>
+			<th>Zip</th>
+			<th>Company Name</th>
+			<th>Company Catchphrase</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<td>@user.Id</td>
+			<td>@user.Name</td>
+			<td>@user.Email</td>
+			<td>@user.Address.Street</td>
+			<td>@user.Address.City</td>
+			<td>@user.Address.Zip</td>
+			<td>@user.Company.Name</td>
+			<td>@user.Company.CatchPhrase</td>
+		</tr>
+
+		</tbody>
+	</table>
+
+	<button class="btn btn-primary" @onclick="SaveUser">Save User</button>
+	<button class="btn btn-primary" @onclick="ResetForm">Discard User and Retry</button>
+}
+
+@if(userSaved)
+{
+	<p style ="color: green; font-weight: bold;">User @user.Name saved!</p>
+}
+
+@code {
+	private User user = new();
+	private List<User> users = new();
+	private int step = 1;
+	private bool formIsDone;
+	private bool userSaved = false;
+
+	protected override void OnInitialized()
+	{
+		step = 1;
+	}
+	private void NextPage()
+	{
+		userSaved = false;
+		step++;
+		StateHasChanged();
+	}
+
+	private void FinalSubmit()
+	{
+		formIsDone = true;
+		step = 0;
+	}
+	private void ResetForm()
+	{
+		user = new();
+		step = 1;
+		formIsDone = false;
+	}
+	private void SaveUser()
+	{
+		//Save user to database logic
+		users.Add(user);
+		ResetForm();
+		userSaved = true;
+	}
+
+	
+}

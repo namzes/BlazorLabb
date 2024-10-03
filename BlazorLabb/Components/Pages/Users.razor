@@ -11,7 +11,9 @@
 }
 else
 {
-	List<User> dataList = UserServices.GetUsers();
+	
+	
+
 	<table class="table">
 		<thead>
 		<tr>
@@ -25,30 +27,57 @@ else
 		</tr>
 		</thead>
 		<tbody>
-		@foreach (var user in dataList)
+		@if (!allUsers)
 		{
-			<tr>
-				<td>@user.Name</td>
-				<td>@user.Email</td>
-				<td>@user.Address.Street</td>
-				<td>@user.Address.City</td>
-				<td>@user.Address.Zip</td>
-				<td>@user.Company.Name</td>
-				<td>@user.Company.CatchPhrase</td>
-			</tr>
+			@for (int i = 0; i < 5; i++)
+			{
+				<tr>
+					<td>@userList[i].Name</td>
+					<td>@userList[i].Email</td>
+					<td>@userList[i].Address.Street</td>
+					<td>@userList[i].Address.City</td>
+					<td>@userList[i].Address.Zip</td>
+					<td>@userList[i].Company.Name</td>
+					<td>@userList[i].Company.CatchPhrase</td>
+				</tr>
+			}
 		}
+		else if (allUsers)
+		{
+			foreach (var user in userList)
+			{
+				<tr>
+					<td>@user.Name</td>
+					<td>@user.Email</td>
+					<td>@user.Address.Street</td>
+					<td>@user.Address.City</td>
+					<td>@user.Address.Zip</td>
+					<td>@user.Company.Name</td>
+					<td>@user.Company.CatchPhrase</td>
+				</tr>
+			}
+		}
+			
 		</tbody>
 	</table>
+	<button class="btn btn-primary" @onclick="ToggleListView">@btnMessage</button>
+	<button class="btn btn-primary" @onclick="OnSortButtonClick">@sortBtnMessage</button>
 }
 
 
 @code {
-
+	List<User> userList = new();
 	private string loadingMessage = "Loading";
 	private bool loadingNotDone = true;
+	private bool allUsers;
+	private string btnMessage = "Toggle Full List View";
+	private bool sortCompanyName = false;
+	private string sortBtnMessage = "Sort by Company Name";
 
 	protected override void OnInitialized()
 	{
+		userList = UserServices.GetUsers();
+		userList = SortUsersByName(userList);
 		_ = SimulateLoading();
 	}
 
@@ -63,6 +92,56 @@ else
 
 		loadingNotDone = false;
 		StateHasChanged();
+	}
+
+	private List<User> SortUsersByName(List<User> userList)
+	{
+		var orderedUserList = from user in userList
+									orderby user.Name
+									select user;
+
+		return orderedUserList.ToList();
+	}
+	private List<User> SortUsersByCompanyName(List<User> userList)
+	{
+		var orderedUserList = from user in userList
+									orderby user.Company.Name
+									select user;
+
+		return orderedUserList.ToList();
+	}
+
+	private void OnSortButtonClick()
+	{
+		if (!sortCompanyName)
+		{
+			userList = SortUsersByCompanyName(userList);
+			sortBtnMessage = "Sort by Name";
+		}
+		else
+		{
+			userList = SortUsersByName(userList);
+			sortBtnMessage = "Sort by Company name";
+		}
+
+		sortCompanyName = !sortCompanyName;
+		StateHasChanged();
+	}
+
+	
+
+	private void ToggleListView()
+	{
+		if (!allUsers)
+		{
+			allUsers = true;
+			btnMessage = "Toggle Small List View";
+		}
+		else if (allUsers)
+		{
+			allUsers = false;
+			btnMessage = "Toggle Full List View";
+		}
 	}
 
 	
