@@ -96,19 +96,11 @@ else
 
 	private List<User> SortUsersByName(List<User> userList)
 	{
-		var orderedUserList = from user in userList
-									orderby user.Name
-									select user;
-
-		return orderedUserList.ToList();
+		return userList.OrderBy(user => user.Name).ToList();
 	}
 	private List<User> SortUsersByCompanyName(List<User> userList)
 	{
-		var orderedUserList = from user in userList
-									orderby user.Company.Name
-									select user;
-
-		return orderedUserList.ToList();
+		return userList.OrderBy(user => user.Company.Name).ToList();
 	}
 
 	private void OnSortButtonClick()
