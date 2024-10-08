@@ -2,9 +2,9 @@
 {
 	public static class UserServices
 	{
-		public static List<IUser> GetUsers()
+		public static List<User> GetUsers()
 		{
-			var users = new List<IUser>
+			var users = new List<User>
 			{
 				new User
 				{
@@ -15,7 +15,7 @@
 					{
 						Street = "Storgatan 10",
 						City = "Stockholm",
-						Zip = "111 22"
+						ZipCode = "111 22"
 					},
 					Company = new Company
 					{
@@ -32,7 +32,7 @@
 					{
 						Street = "Industrivägen 5",
 						City = "Göteborg",
-						Zip = "411 01"
+						ZipCode = "411 01"
 					},
 					Company = new Company
 					{
@@ -49,7 +49,7 @@
 					{
 						Street = "Björkgatan 3",
 						City = "Malmö",
-						Zip = "211 23"
+						ZipCode = "211 23"
 					},
 					Company = new Company
 					{
@@ -66,7 +66,7 @@
 					{
 						Street = "Östra Storgatan 8",
 						City = "Uppsala",
-						Zip = "753 23"
+						ZipCode = "753 23"
 					},
 					Company = new Company
 					{
@@ -83,7 +83,7 @@
 					{
 						Street = "Norrtullsgatan 15",
 						City = "Stockholm",
-						Zip = "113 28"
+						ZipCode = "113 28"
 					},
 					Company = new Company
 					{
@@ -100,7 +100,7 @@
 					{
 						Street = "Stenbrottsvägen 2",
 						City = "Helsingborg",
-						Zip = "252 32"
+						ZipCode = "252 32"
 					},
 					Company = new Company
 					{
@@ -117,7 +117,7 @@
 					{
 						Street = "Köpmangatan 12",
 						City = "Linköping",
-						Zip = "582 23"
+						ZipCode = "582 23"
 					},
 					Company = new Company
 					{
@@ -134,7 +134,7 @@
 					{
 						Street = "Västra Gatan 4",
 						City = "Norrköping",
-						Zip = "602 24"
+						ZipCode = "602 24"
 					},
 					Company = new Company
 					{
@@ -151,7 +151,7 @@
 					{
 						Street = "Södra Vägen 7",
 						City = "Västerås",
-						Zip = "721 30"
+						ZipCode = "721 30"
 					},
 					Company = new Company
 					{
@@ -168,7 +168,7 @@
 					{
 						Street = "Skogsgatan 1",
 						City = "Örebro",
-						Zip = "703 60"
+						ZipCode = "703 60"
 					},
 					Company = new Company
 					{

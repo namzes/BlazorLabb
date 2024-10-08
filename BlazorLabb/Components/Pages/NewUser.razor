@@ -32,8 +32,8 @@ else if (step == 2)
 		<InputText id="City" placeholder="Enter City" @bind-Value="user.Address.City" />
 		<ValidationMessage For="@(() => user.Address.City)" />
 		<br />
-		<InputText id="Zip" placeholder="Enter Zip Code" @bind-Value="user.Address.Zip" />
-		<ValidationMessage For="@(() => user.Address.Zip)" />
+		<InputText id="Zip" placeholder="Enter Zip Code" @bind-Value="user.Address.ZipCode" />
+		<ValidationMessage For="@(() => user.Address.ZipCode)" />
 		<br />
 		<button type="submit">Submit</button>
 	</EditForm>
@@ -76,7 +76,7 @@ else if (formIsDone)
 			<td>@user.Email</td>
 			<td>@user.Address.Street</td>
 			<td>@user.Address.City</td>
-			<td>@user.Address.Zip</td>
+			<td>@user.Address.ZipCode</td>
 			<td>@user.Company.Name</td>
 			<td>@(user.Company.CatchPhrase ?? "Check your assumptions")</td>
 		</tr>

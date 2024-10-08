@@ -4,17 +4,17 @@ using System.Runtime.CompilerServices;
 
 namespace BlazorLabb
 {
-	public interface IUser
-	{
-		public int Id { get; set; }
-		public string? Name { get; set; }
-		public string? Email { get; set; }
+	//public interface IUser
+	//{
+	//	public int Id { get; set; }
+	//	public string? Name { get; set; }
+	//	public string? Email { get; set; }
 
-		public Address? Address { get; }
-		public Company? Company { get; }
-	}
+	//	public Address? Address { get; }
+	//	public Company? Company { get; }
+	//}
 
-	public class User : IUser
+	public class User
 	{
 		public int Id { get; set; }
 
@@ -23,10 +23,12 @@ namespace BlazorLabb
 		public string? Name { get; set; }
 		[Required(ErrorMessage = "Email is required")]
 		[EmailAddress(ErrorMessage = "Must contain a valid email")]
+		public string? Username { get; set; }
 		public string? Email { get; set; }
 		public Address Address { get; set; } = new Address();
 		public Company Company { get; set; } = new Company();
-
+		public string? Phone { get; set; }
+		public string? Website { get; set; }
 		public User()
 		{
 			Random random = new Random();
@@ -45,7 +47,14 @@ namespace BlazorLabb
 		public string? City { get; set; }
 		[Required(ErrorMessage = "Zip is required")]
 		[StringLength(5, ErrorMessage = "Zip can't be longer than 5 characters")]
-		public string? Zip { get; set; }
+		public string? ZipCode { get; set; }
+		public string? Suite { get; set; }
+		public DataRepoGeo? Geo { get; set; } = new DataRepoGeo();
+		public class DataRepoGeo
+		{
+			public string? Lat { get; set; }
+			public string? Lng { get; set; }
+		}
 	}
 
 	public class Company
@@ -53,6 +62,7 @@ namespace BlazorLabb
 		[Required(ErrorMessage = "Company Name is required")]
 		public string? Name { get; set; }
 		public string? CatchPhrase { get; set; }
+		public string? Bs { get; set; }
 	}
 
 	

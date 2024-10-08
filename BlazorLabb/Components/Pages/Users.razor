@@ -35,7 +35,7 @@ else if (localDataBase)
 					<td>@user.Email</td>
 					<td>@(user.Address?.Street ?? "N/A")</td>
 					<td>@(user.Address?.City ?? "N/A")</td>
-					<td>@(user.Address?.Zip ?? "N/A")</td>
+					<td>@(user.Address?.ZipCode ?? "N/A")</td>
 					<td>@(user.Company?.Name ?? "N/A")</td>
 					<td>@(user.Company?.CatchPhrase ?? "N/A")</td>
 				</tr>
@@ -51,7 +51,7 @@ else if (localDataBase)
 					<td>@user.Email</td>
 					<td>@(user.Address?.Street ?? "N/A")</td>
 					<td>@(user.Address?.City ?? "N/A")</td>
-					<td>@(user.Address?.Zip ?? "N/A")</td>
+					<td>@(user.Address?.ZipCode ?? "N/A")</td>
 					<td>@(user.Company?.Name ?? "N/A")</td>
 					<td>@(user.Company?.CatchPhrase ?? "N/A")</td>
 				</tr>
@@ -90,7 +90,7 @@ else
 						<td>@user.Email</td>
 						<td>@(user.Address?.Street ?? "N/A")</td>
 						<td>@(user.Address?.City ?? "N/A")</td>
-						<td>@(user.Address?.Zip ?? "N/A")</td>
+						<td>@(user.Address?.ZipCode ?? "N/A")</td>
 						<td>@(user.Company?.Name  ?? "N/A")</td>
 						<td>@(user.Company?.CatchPhrase ?? "N/A")</td>
 					</tr>
@@ -101,11 +101,12 @@ else
 				foreach (var user in userList)
 				{
 					<tr>
+						<td>@user.Id</td>
 						<td>@user.Name</td>
 						<td>@user.Email</td>
 						<td>@(user.Address?.Street ?? "N/A")</td>
 						<td>@(user.Address?.City ?? "N/A")</td>
-						<td>@(user.Address?.Zip ?? "N/A")</td>
+						<td>@(user.Address?.ZipCode ?? "N/A")</td>
 						<td>@(user.Company?.Name ?? "N/A")</td>
 						<td>@(user.Company?.CatchPhrase ?? "N/A")</td>
 					</tr>
@@ -120,7 +121,7 @@ else
 <button class="btn btn-primary" @onclick="ChangeUserRepo">@changeUserRepo</button>
 
 @code {
-	List<IUser> userList = new();
+	List<User> userList = new();
 	private string loadingMessage = "Loading";
 	private bool loadingNotDone = true;
 	private bool localDataBase = true;
@@ -151,11 +152,11 @@ else
 		StateHasChanged();
 	}
 
-	private List<IUser> SortUsersByName(List<IUser> userList)
+	private List<User> SortUsersByName(List<User> userList)
 	{
 		return userList.OrderBy(user => user.Name).ToList();
 	}
-	private List<IUser> SortUsersByCompanyName(List<IUser> userList)
+	private List<User> SortUsersByCompanyName(List<User> userList)
 	{
 		return userList.OrderBy(user => user.Company?.Name).ToList();
 	}
@@ -184,16 +185,16 @@ else
 		if (!localDataBase)
 		{
 			userList = UserServices.GetUsers();
-			changeUserRepo = "Fetch Local Users";
+			changeUserRepo = "Fetch Users from API";
 			localDataBase = true;
 		}
 		else if (localDataBase)
 		{
 			var apiDataRep = new APIDataRepository(new HttpClient());
-			var repoUsers = await apiDataRep.GetUsers();
-			userList = repoUsers.Select(dataRepoUser => (IUser)dataRepoUser).ToList();
+			userList = await apiDataRep.GetUsers();
 			
-			changeUserRepo = "Fetch Users from API";
+			changeUserRepo = "Fetch Local Users";
+			
 			localDataBase = false;
 		}
 

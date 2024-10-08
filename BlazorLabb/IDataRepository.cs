@@ -5,8 +5,8 @@ namespace BlazorLabb
 	public interface IDataRepository
 	{
 
-		Task<List<DataRepoUser>> GetUsers();
-		Task<DataRepoUser> GetUser(int id);
+		Task<List<User>> GetUsers();
+		Task<User> GetUser(int id);
 	}
 
 	public class APIDataRepository : IDataRepository
@@ -17,28 +17,28 @@ namespace BlazorLabb
 		{
 			_httpClient = httpClient;
 		}
-		public async Task<List<DataRepoUser>> GetUsers()
+		public async Task<List<User>> GetUsers()
 		{
 			var responseCall = await _httpClient.GetAsync("https://jsonplaceholder.typicode.com/users");
 			if (responseCall.IsSuccessStatusCode)
 			{
 				var response = await responseCall.Content.ReadAsStringAsync();
-				var users = JsonSerializer.Deserialize<List<DataRepoUser>>(response, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-				return users ?? new List<DataRepoUser>();
+				var users = JsonSerializer.Deserialize<List<User>>(response, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+				return users ?? new List<User>();
 			}
-			return new List<DataRepoUser>();
+			return new List<User>();
 		}
 
-		public async Task<DataRepoUser> GetUser(int id)
+		public async Task<User> GetUser(int id)
 		{
 			var responseCall = await _httpClient.GetAsync($"https://jsonplaceholder.typicode.com/users/{id}");
 			if (responseCall.IsSuccessStatusCode)
 			{
 				var response = await responseCall.Content.ReadAsStringAsync();
-				var user = JsonSerializer.Deserialize<DataRepoUser>(response, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-				return user ?? new DataRepoUser();
+				var user = JsonSerializer.Deserialize<User>(response, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+				return user ?? new User();
 			}
-			return new DataRepoUser();
+			return new User();
 		}
 
 	}
