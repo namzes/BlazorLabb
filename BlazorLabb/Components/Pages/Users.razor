@@ -7,16 +7,14 @@
 
 @if (loadingNotDone)
 {
-	<p>@loadingMessage</p>
+	<p style="font-size: 36px; color: red;">@(new MarkupString(loadingMessage))</p>
 }
-else
+else if (localDataBase)
 {
-	
-	
-
 	<table class="table">
 		<thead>
 		<tr>
+			<th>ID</th>
 			<th>Name</th>
 			<th>Email</th>
 			<th>Street</th>
@@ -29,16 +27,17 @@ else
 		<tbody>
 		@if (!allUsers)
 		{
-			@for (int i = 0; i < 5; i++)
+			@foreach (var user in userList.Take(5))
 			{
 				<tr>
-					<td>@userList[i].Name</td>
-					<td>@userList[i].Email</td>
-					<td>@userList[i].Address.Street</td>
-					<td>@userList[i].Address.City</td>
-					<td>@userList[i].Address.Zip</td>
-					<td>@userList[i].Company.Name</td>
-					<td>@userList[i].Company.CatchPhrase</td>
+					<td>@user.Id</td>
+					<td>@user.Name</td>
+					<td>@user.Email</td>
+					<td>@(user.Address?.Street ?? "N/A")</td>
+					<td>@(user.Address?.City ?? "N/A")</td>
+					<td>@(user.Address?.Zip ?? "N/A")</td>
+					<td>@(user.Company?.Name ?? "N/A")</td>
+					<td>@(user.Company?.CatchPhrase ?? "N/A")</td>
 				</tr>
 			}
 		}
@@ -47,28 +46,85 @@ else
 			foreach (var user in userList)
 			{
 				<tr>
+					<td>@user.Id</td>
 					<td>@user.Name</td>
 					<td>@user.Email</td>
-					<td>@user.Address.Street</td>
-					<td>@user.Address.City</td>
-					<td>@user.Address.Zip</td>
-					<td>@user.Company.Name</td>
-					<td>@user.Company.CatchPhrase</td>
+					<td>@(user.Address?.Street ?? "N/A")</td>
+					<td>@(user.Address?.City ?? "N/A")</td>
+					<td>@(user.Address?.Zip ?? "N/A")</td>
+					<td>@(user.Company?.Name ?? "N/A")</td>
+					<td>@(user.Company?.CatchPhrase ?? "N/A")</td>
 				</tr>
 			}
 		}
 			
 		</tbody>
 	</table>
-	<button class="btn btn-primary" @onclick="ToggleListView">@btnMessage</button>
-	<button class="btn btn-primary" @onclick="OnSortButtonClick">@sortBtnMessage</button>
-}
+	
 
+
+}
+else
+{
+	<table class="table">
+		<thead>
+		<tr>
+			<th>ID</th>
+			<th>Name</th>
+			<th>Email</th>
+			<th>Street</th>
+			<th>City</th>
+			<th>ZipCode</th>
+			<th>Company</th>
+			<th>Company Catchphrase</th>
+		</tr>
+		</thead>
+		<tbody>
+			@if (!allUsers)
+			{
+				@foreach (var user in userList.Take(5))
+				{
+					<tr>
+						<td>@user.Id</td>
+						<td>@user.Name</td>
+						<td>@user.Email</td>
+						<td>@(user.Address?.Street ?? "N/A")</td>
+						<td>@(user.Address?.City ?? "N/A")</td>
+						<td>@(user.Address?.Zip ?? "N/A")</td>
+						<td>@(user.Company?.Name  ?? "N/A")</td>
+						<td>@(user.Company?.CatchPhrase ?? "N/A")</td>
+					</tr>
+				}
+			}
+			else if (allUsers)
+			{
+				foreach (var user in userList)
+				{
+					<tr>
+						<td>@user.Name</td>
+						<td>@user.Email</td>
+						<td>@(user.Address?.Street ?? "N/A")</td>
+						<td>@(user.Address?.City ?? "N/A")</td>
+						<td>@(user.Address?.Zip ?? "N/A")</td>
+						<td>@(user.Company?.Name ?? "N/A")</td>
+						<td>@(user.Company?.CatchPhrase ?? "N/A")</td>
+					</tr>
+				}
+			}
+
+		</tbody>
+	</table>
+}
+<button class="btn btn-primary" @onclick="ToggleListView">@btnMessage</button>
+<button class="btn btn-primary" @onclick="OnSortButtonClick">@sortBtnMessage</button>
+<button class="btn btn-primary" @onclick="ChangeUserRepo">@changeUserRepo</button>
 
 @code {
-	List<User> userList = new();
+	List<IUser> userList = new();
 	private string loadingMessage = "Loading";
 	private bool loadingNotDone = true;
+	private bool localDataBase = true;
+	private string changeUserRepo = "Change User Repository";
 	private bool allUsers;
 	private string btnMessage = "Toggle Full List View";
 	private bool sortCompanyName = false;
@@ -85,8 +141,9 @@ else
 	{
 		for (int i = 0; i < 5; i++)
 		{
+			var colors = new[] { "purple", "blue", "green", "orange", "red" };
 			await Task.Delay(500); 
-			loadingMessage += ".";
+			loadingMessage += $"<span style='color:{colors[i]};'>.</span>";
 			StateHasChanged();
 		}
 
@@ -94,13 +151,13 @@ else
 		StateHasChanged();
 	}
 
-	private List<User> SortUsersByName(List<User> userList)
+	private List<IUser> SortUsersByName(List<IUser> userList)
 	{
 		return userList.OrderBy(user => user.Name).ToList();
 	}
-	private List<User> SortUsersByCompanyName(List<User> userList)
+	private List<IUser> SortUsersByCompanyName(List<IUser> userList)
 	{
-		return userList.OrderBy(user => user.Company.Name).ToList();
+		return userList.OrderBy(user => user.Company?.Name).ToList();
 	}
 
 	private void OnSortButtonClick()
@@ -117,6 +174,29 @@ else
 		}
 
 		sortCompanyName = !sortCompanyName;
+		StateHasChanged();
+	}
+	private async void ChangeUserRepo()
+	{
+		loadingNotDone = true;
+		_ = SimulateLoading();
+
+		if (!localDataBase)
+		{
+			userList = UserServices.GetUsers();
+			changeUserRepo = "Fetch Local Users";
+			localDataBase = true;
+		}
+		else if (localDataBase)
+		{
+			var apiDataRep = new APIDataRepository(new HttpClient());
+			var repoUsers = await apiDataRep.GetUsers();
+			userList = repoUsers.Select(dataRepoUser => (IUser)dataRepoUser).ToList();
+			
+			changeUserRepo = "Fetch Users from API";
+			localDataBase = false;
+		}
+
 		StateHasChanged();
 	}
 

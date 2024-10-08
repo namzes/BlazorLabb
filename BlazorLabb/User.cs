@@ -4,7 +4,17 @@ using System.Runtime.CompilerServices;
 
 namespace BlazorLabb
 {
-	public class User
+	public interface IUser
+	{
+		public int Id { get; set; }
+		public string? Name { get; set; }
+		public string? Email { get; set; }
+
+		public Address? Address { get; }
+		public Company? Company { get; }
+	}
+
+	public class User : IUser
 	{
 		public int Id { get; set; }
 

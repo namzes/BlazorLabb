@@ -2,9 +2,9 @@
 {
 	public static class UserServices
 	{
-		public static List<User> GetUsers()
+		public static List<IUser> GetUsers()
 		{
-			var users = new List<User>
+			var users = new List<IUser>
 			{
 				new User
 				{
