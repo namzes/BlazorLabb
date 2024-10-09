@@ -11,78 +11,24 @@
 }
 else if (localDataBase)
 {
+	<input type="text" @bind="searchTerm" placeholder="Search by name or company" size="50px" />
 	<table class="table">
 		<thead>
-		<tr>
-			<th>ID</th>
-			<th>Name</th>
-			<th>Email</th>
-			<th>Street</th>
-			<th>City</th>
-			<th>ZipCode</th>
-			<th>Company</th>
-			<th>Company Catchphrase</th>
-		</tr>
-		</thead>
-		<tbody>
-		@if (!allUsers)
-		{
-			@foreach (var user in userList.Take(5))
-			{
-				<tr>
-					<td>@user.Id</td>
-					<td>@user.Name</td>
-					<td>@user.Email</td>
-					<td>@(user.Address?.Street ?? "N/A")</td>
-					<td>@(user.Address?.City ?? "N/A")</td>
-					<td>@(user.Address?.ZipCode ?? "N/A")</td>
-					<td>@(user.Company?.Name ?? "N/A")</td>
-					<td>@(user.Company?.CatchPhrase ?? "N/A")</td>
-				</tr>
-			}
-		}
-		else if (allUsers)
-		{
-			foreach (var user in userList)
-			{
-				<tr>
-					<td>@user.Id</td>
-					<td>@user.Name</td>
-					<td>@user.Email</td>
-					<td>@(user.Address?.Street ?? "N/A")</td>
-					<td>@(user.Address?.City ?? "N/A")</td>
-					<td>@(user.Address?.ZipCode ?? "N/A")</td>
-					<td>@(user.Company?.Name ?? "N/A")</td>
-					<td>@(user.Company?.CatchPhrase ?? "N/A")</td>
-				</tr>
-			}
-		}
-			
-		</tbody>
-	</table>
-	
-
-
-}
-else
-{
-	<table class="table">
-		<thead>
-		<tr>
-			<th>ID</th>
-			<th>Name</th>
-			<th>Email</th>
-			<th>Street</th>
-			<th>City</th>
-			<th>ZipCode</th>
-			<th>Company</th>
-			<th>Company Catchphrase</th>
-		</tr>
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Email</th>
+				<th>Street</th>
+				<th>City</th>
+				<th>ZipCode</th>
+				<th>Company</th>
+				<th>Company Catchphrase</th>
+			</tr>
 		</thead>
 		<tbody>
 			@if (!allUsers)
 			{
-				@foreach (var user in userList.Take(5))
+				@foreach (var user in filteredUsers.Take(5))
 				{
 					<tr>
 						<td>@user.Id</td>
@@ -91,14 +37,14 @@ else
 						<td>@(user.Address?.Street ?? "N/A")</td>
 						<td>@(user.Address?.City ?? "N/A")</td>
 						<td>@(user.Address?.ZipCode ?? "N/A")</td>
-						<td>@(user.Company?.Name  ?? "N/A")</td>
+						<td>@(user.Company?.Name ?? "N/A")</td>
 						<td>@(user.Company?.CatchPhrase ?? "N/A")</td>
 					</tr>
 				}
 			}
 			else if (allUsers)
 			{
-				foreach (var user in userList)
+				foreach (var user in filteredUsers)
 				{
 					<tr>
 						<td>@user.Id</td>
@@ -115,107 +61,78 @@ else
 
 		</tbody>
 	</table>
+
+
+
+}
+else
+{
+	<input type="text" @bind="searchTerm" placeholder="Search by name or company" size="50px" />
+	<table class="table">
+		<thead>
+		<tr>
+			<th>ID</th>
+			<th>Name</th>
+			<th>Username</th>
+			<th>Email</th>
+			<th>Street</th>
+			<th>City</th>
+			<th>Suite</th>
+			<th>ZipCode</th>
+			<th>Latitude</th>
+			<th>Longitude</th>
+			<th>Company</th>
+			<th>Company Catchphrase</th>
+			<th>Business Service</th>
+		</tr>
+		</thead>
+		<tbody>
+			@if (!allUsers)
+			{
+				@foreach (var user in filteredUsers.Take(5))
+				{
+					<tr>
+						<td>@user.Id</td>
+						<td>@user.Name</td>
+						<td>@user.Username</td>
+						<td>@user.Email</td>
+						<td>@(user.Address?.Street ?? "N/A")</td>
+						<td>@(user.Address?.City ?? "N/A")</td>
+						<td>@(user.Address?.Suite ?? "N/A")</td>
+						<td>@(user.Address?.ZipCode ?? "N/A")</td>
+						<td>@(user.Address?.Geo?.Lat)</td>
+						<td>@(user.Address?.Geo?.Lng)</td>
+						<td>@(user.Company?.Name  ?? "N/A")</td>
+						<td>@(user.Company?.CatchPhrase ?? "N/A")</td>
+						<td>@(user.Company?.Bs ?? "N/A")</td>
+					</tr>
+				}
+			}
+			else if (allUsers)
+			{
+				foreach (var user in filteredUsers)
+				{
+					<tr>
+						<td>@user.Id</td>
+						<td>@user.Name</td>
+						<td>@user.Username</td>
+						<td>@user.Email</td>
+						<td>@(user.Address?.Street ?? "N/A")</td>
+						<td>@(user.Address?.City ?? "N/A")</td>
+						<td>@(user.Address?.Suite ?? "N/A")</td>
+						<td>@(user.Address?.ZipCode ?? "N/A")</td>
+						<td>@(user.Address?.Geo?.Lat)</td>
+						<td>@(user.Address?.Geo?.Lng)</td>
+						<td>@(user.Company?.Name ?? "N/A")</td>
+						<td>@(user.Company?.CatchPhrase ?? "N/A")</td>
+						<td>@(user.Company?.Bs ?? "N/A")</td>
+					</tr>
+				}
+			}
+
+		</tbody>
+	</table>
 }
 <button class="btn btn-primary" @onclick="ToggleListView">@btnMessage</button>
 <button class="btn btn-primary" @onclick="OnSortButtonClick">@sortBtnMessage</button>
 <button class="btn btn-primary" @onclick="ChangeUserRepo">@changeUserRepo</button>
-
-@code {
-	List<User> userList = new();
-	private string loadingMessage = "Loading";
-	private bool loadingNotDone = true;
-	private bool localDataBase = true;
-	private string changeUserRepo = "Change User Repository";
-	private bool allUsers;
-	private string btnMessage = "Toggle Full List View";
-	private bool sortCompanyName = false;
-	private string sortBtnMessage = "Sort by Company Name";
-
-	protected override void OnInitialized()
-	{
-		userList = UserServices.GetUsers();
-		userList = SortUsersByName(userList);
-		_ =SimulateLoading();
-	}
-
-	private async Task SimulateLoading()
-	{
-		for (int i = 0; i < 5; i++)
-		{
-			var colors = new[] { "purple", "blue", "green", "orange", "red" };
-			await Task.Delay(500); 
-			loadingMessage += $"<span style='color:{colors[i]};'>.</span>";
-			StateHasChanged();
-		}
-
-		loadingNotDone = false;
-		StateHasChanged();
-	}
-
-	private List<User> SortUsersByName(List<User> userList)
-	{
-		return userList.OrderBy(user => user.Name).ToList();
-	}
-	private List<User> SortUsersByCompanyName(List<User> userList)
-	{
-		return userList.OrderBy(user => user.Company?.Name).ToList();
-	}
-
-	private void OnSortButtonClick()
-	{
-		if (!sortCompanyName)
-		{
-			userList = SortUsersByCompanyName(userList);
-			sortBtnMessage = "Sort by Name";
-		}
-		else
-		{
-			userList = SortUsersByName(userList);
-			sortBtnMessage = "Sort by Company name";
-		}
-
-		sortCompanyName = !sortCompanyName;
-		StateHasChanged();
-	}
-	private async void ChangeUserRepo()
-	{
-		loadingNotDone = true;
-		_ = SimulateLoading();
-
-		if (!localDataBase)
-		{
-			userList = UserServices.GetUsers();
-			changeUserRepo = "Fetch Users from API";
-			localDataBase = true;
-		}
-		else if (localDataBase)
-		{
-			var apiDataRep = new APIDataRepository(new HttpClient());
-			userList = await apiDataRep.GetUsers();
-			
-			changeUserRepo = "Fetch Local Users";
-			
-			localDataBase = false;
-		}
-
-		StateHasChanged();
-	}
-
-	
-
-	private void ToggleListView()
-	{
-		if (!allUsers)
-		{
-			allUsers = true;
-			btnMessage = "Toggle Small List View";
-		}
-		else if (allUsers)
-		{
-			allUsers = false;
-			btnMessage = "Toggle Full List View";
-		}
-	}
-
-	
-}
