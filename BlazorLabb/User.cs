@@ -1,19 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 
 namespace BlazorLabb
 {
-	//public interface IUser
-	//{
-	//	public int Id { get; set; }
-	//	public string? Name { get; set; }
-	//	public string? Email { get; set; }
-
-	//	public Address? Address { get; }
-	//	public Company? Company { get; }
-	//}
-
 	public class User
 	{
 		public int Id { get; set; }
@@ -23,8 +14,8 @@ namespace BlazorLabb
 		public string? Name { get; set; }
 		[Required(ErrorMessage = "Email is required")]
 		[EmailAddress(ErrorMessage = "Must contain a valid email")]
-		public string? Username { get; set; }
 		public string? Email { get; set; }
+		public string? Username { get; set; }
 		public Address Address { get; set; } = new Address();
 		public Company Company { get; set; } = new Company();
 		public string? Phone { get; set; }
@@ -36,6 +27,8 @@ namespace BlazorLabb
 		}
 
 		
+
+
 	}
 
 

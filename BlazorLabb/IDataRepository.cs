@@ -9,11 +9,11 @@ namespace BlazorLabb
 		Task<User> GetUser(int id);
 	}
 
-	public class APIDataRepository : IDataRepository
+	public class ApiDataRepository : IDataRepository
 	{
 		private readonly HttpClient _httpClient;
 
-		public APIDataRepository(HttpClient httpClient)
+		public ApiDataRepository(HttpClient httpClient)
 		{
 			_httpClient = httpClient;
 		}
@@ -227,11 +227,62 @@ namespace BlazorLabb
 			
 
 		}
+		
 
 		public async Task<User> GetUser(int id)
 		{
 
 			return await Task.FromResult(new User());
+		}
+
+	}
+
+	public class JsonDataRepository : IDataRepository
+	{
+		private string filePath = "C:\\Users\\nicke\\source\\repos\\BlazorLabb\\usersjson.json";
+		public JsonDataRepository() { }
+		public async Task<List<User>> GetUsers()
+		{
+			var users = new List<User>();
+			var jsonString = await File.ReadAllTextAsync(filePath);
+			users = JsonSerializer.Deserialize<List<User>>(jsonString);
+			return users ?? new List<User>();
+		}
+		public async Task<User> GetUser(int id)
+		{
+			try
+			{
+				var jsonString = await File.ReadAllTextAsync(filePath);
+				var users = JsonSerializer.Deserialize<List<User>>(jsonString);
+				return users?.FirstOrDefault(user => user.Id == id) ?? new User();
+			}
+			catch (FileNotFoundException)
+			{
+				return new User();
+			}
+			catch (JsonException ex)
+			{
+				Console.WriteLine(ex); //Fixa
+				return new User();
+			}
+			
+		}
+		public void SaveUserToJson(User user)
+		{
+			List<User> users = new List<User>();
+			if (File.Exists(filePath))
+			{
+				var existingJsonString = File.ReadAllText(filePath);
+				users = JsonSerializer.Deserialize<List<User>>(existingJsonString) ?? new List<User>();
+			}
+			users.Add(user);
+			string newJsonString = JsonSerializer.Serialize(users);
+			File.WriteAllText(filePath, newJsonString);
+		}
+
+		public string GetFilePath()
+		{
+			return filePath;
 		}
 
 	}
@@ -250,6 +301,7 @@ namespace BlazorLabb
 			return userList.Where(user => user.Name != null && user.Name.Contains(search, StringComparison.OrdinalIgnoreCase) 
 			                              || user.Company.Name != null && user.Company.Name.Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
 		}
+
 	}
 
 

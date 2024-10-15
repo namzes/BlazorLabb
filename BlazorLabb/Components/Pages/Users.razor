@@ -9,130 +9,96 @@
 {
 	<p style="font-size: 36px; color: red;">@(new MarkupString(loadingMessage))</p>
 }
-else if (localDataBase)
-{
-	<input type="text" @bind="searchTerm" placeholder="Search by name or company" size="50px" />
-	<table class="table">
-		<thead>
-			<tr>
-				<th>ID</th>
-				<th>Name</th>
-				<th>Email</th>
-				<th>Street</th>
-				<th>City</th>
-				<th>ZipCode</th>
-				<th>Company</th>
-				<th>Company Catchphrase</th>
-			</tr>
-		</thead>
-		<tbody>
-			@if (!allUsers)
-			{
-				@foreach (var user in filteredUsers.Take(5))
-				{
-					<tr>
-						<td>@user.Id</td>
-						<td>@user.Name</td>
-						<td>@user.Email</td>
-						<td>@(user.Address?.Street ?? "N/A")</td>
-						<td>@(user.Address?.City ?? "N/A")</td>
-						<td>@(user.Address?.ZipCode ?? "N/A")</td>
-						<td>@(user.Company?.Name ?? "N/A")</td>
-						<td>@(user.Company?.CatchPhrase ?? "N/A")</td>
-					</tr>
-				}
-			}
-			else if (allUsers)
-			{
-				foreach (var user in filteredUsers)
-				{
-					<tr>
-						<td>@user.Id</td>
-						<td>@user.Name</td>
-						<td>@user.Email</td>
-						<td>@(user.Address?.Street ?? "N/A")</td>
-						<td>@(user.Address?.City ?? "N/A")</td>
-						<td>@(user.Address?.ZipCode ?? "N/A")</td>
-						<td>@(user.Company?.Name ?? "N/A")</td>
-						<td>@(user.Company?.CatchPhrase ?? "N/A")</td>
-					</tr>
-				}
-			}
-
-		</tbody>
-	</table>
-
-
-
-}
 else
 {
-	<input type="text" @bind="searchTerm" placeholder="Search by name or company" size="50px" />
-	<table class="table">
-		<thead>
-		<tr>
-			<th>ID</th>
-			<th>Name</th>
-			<th>Username</th>
-			<th>Email</th>
-			<th>Street</th>
-			<th>City</th>
-			<th>Suite</th>
-			<th>ZipCode</th>
-			<th>Latitude</th>
-			<th>Longitude</th>
-			<th>Company</th>
-			<th>Company Catchphrase</th>
-			<th>Business Service</th>
-		</tr>
-		</thead>
-		<tbody>
-			@if (!allUsers)
-			{
-				@foreach (var user in filteredUsers.Take(5))
-				{
-					<tr>
-						<td>@user.Id</td>
-						<td>@user.Name</td>
-						<td>@user.Username</td>
-						<td>@user.Email</td>
-						<td>@(user.Address?.Street ?? "N/A")</td>
-						<td>@(user.Address?.City ?? "N/A")</td>
-						<td>@(user.Address?.Suite ?? "N/A")</td>
-						<td>@(user.Address?.ZipCode ?? "N/A")</td>
-						<td>@(user.Address?.Geo?.Lat)</td>
-						<td>@(user.Address?.Geo?.Lng)</td>
-						<td>@(user.Company?.Name  ?? "N/A")</td>
-						<td>@(user.Company?.CatchPhrase ?? "N/A")</td>
-						<td>@(user.Company?.Bs ?? "N/A")</td>
-					</tr>
-				}
-			}
-			else if (allUsers)
-			{
-				foreach (var user in filteredUsers)
-				{
-					<tr>
-						<td>@user.Id</td>
-						<td>@user.Name</td>
-						<td>@user.Username</td>
-						<td>@user.Email</td>
-						<td>@(user.Address?.Street ?? "N/A")</td>
-						<td>@(user.Address?.City ?? "N/A")</td>
-						<td>@(user.Address?.Suite ?? "N/A")</td>
-						<td>@(user.Address?.ZipCode ?? "N/A")</td>
-						<td>@(user.Address?.Geo?.Lat)</td>
-						<td>@(user.Address?.Geo?.Lng)</td>
-						<td>@(user.Company?.Name ?? "N/A")</td>
-						<td>@(user.Company?.CatchPhrase ?? "N/A")</td>
-						<td>@(user.Company?.Bs ?? "N/A")</td>
-					</tr>
-				}
-			}
+    <input type="text" @bind="searchTerm" placeholder="Search by name or company" size="50" />
+    <table class="table">
+	    <thead>
+	    <tr>
+		    <th>ID</th>
+		    <th>Name</th>
+		    @if (dataRepoChoice == "2")
+		    {
+			    <th>Username</th>
+		    }
+		    <th>Email</th>
+		    <th>Street</th>
+		    <th>City</th>
+		    @if (dataRepoChoice == "2") 
+		    {
+			    <th>Suite</th>
+			    <th>Latitude</th>
+			    <th>Longitude</th>
+		    }
+		    <th>ZipCode</th>
+		    @if (dataRepoChoice == "1" || dataRepoChoice == "3") 
+		    {
+			    <th>Company</th>
+			    <th>Company Catchphrase</th>
+		    }
+		    else if (dataRepoChoice == "2")
+		    {
+			    <th>Company</th>
+			    <th>Company Catchphrase</th>
+			    <th>Business Service</th>
+		    }
+	    </tr>
+	    </thead>
+	    <tbody>
+	    @foreach (var user in allUsers ? filteredUsers : filteredUsers.Take(5))
+	    {
+		    <tr>
+			    <td>@user.Id</td>
+			    <td>@user.Name</td>
 
-		</tbody>
-	</table>
+			    @if (dataRepoChoice == "2")
+			    {
+				    <td>@user.Username</td>
+			    }
+
+			    <td>@user.Email</td>
+			    <td>@(user.Address?.Street ?? "N/A")</td>
+			    <td>@(user.Address?.City ?? "N/A")</td>
+
+			    @if (dataRepoChoice == "2")
+			    {
+				    <td>@(user.Address?.Suite ?? "N/A")</td>
+				    <td>@(user.Address?.Geo?.Lat ?? "N/A")</td>
+				    <td>@(user.Address?.Geo?.Lng ?? "N/A")</td>
+			    }
+			    else
+			    {
+				    <td colspan="3">N/A</td> 
+			    }
+
+			    <td>@(user.Address?.ZipCode ?? "N/A")</td>
+
+			    @if (dataRepoChoice == "1" || dataRepoChoice == "3")
+			    {
+				    <td>@(user.Company?.Name ?? "N/A")</td>
+				    <td>@(user.Company?.CatchPhrase ?? "N/A")</td>
+			    }
+			    else if (dataRepoChoice == "2")
+			    {
+				    <td>@(user.Company?.Name ?? "N/A")</td>
+				    <td>@(user.Company?.CatchPhrase ?? "N/A")</td>
+				    <td>@(user.Company?.Bs ?? "N/A")</td>
+			    }
+		    </tr>
+	    }
+	    </tbody>
+    </table>
+    
 }
+
 <button class="btn btn-primary" @onclick="ToggleListView">@btnMessage</button>
 <button class="btn btn-primary" @onclick="OnSortButtonClick">@sortBtnMessage</button>
-<button class="btn btn-primary" @onclick="ChangeUserRepo">@changeUserRepo</button>
+<select class="form-select" width="50px" @onchange="ChangeUserRepo">
+	<option value="1">Fetch mock users (Default)</option>
+	<option value="2">Fetch users from API</option>
+	<option value="3">Fetch users from saved JSON file</option>
+</select>
+@if (jsonNotLoaded)
+{
+	<p style="color: red">@jsonFileErrorMsg</p>
+}

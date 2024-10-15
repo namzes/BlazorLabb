@@ -1,6 +1,7 @@
 ﻿@page "/newuser"
 @using System.Runtime.InteropServices.JavaScript
 @using Microsoft.AspNetCore.Identity
+@using System.Text.Json
 @attribute [StreamRendering]
 @rendermode InteractiveServer
 <PageTitle>New User</PageTitle>
@@ -83,9 +84,25 @@ else if (formIsDone)
 
 		</tbody>
 	</table>
-
 	<button class="btn btn-primary" @onclick="SaveUser">Save User</button>
 	<button class="btn btn-primary" @onclick="DeleteUser">Discard User and Retry</button>
+
+	<h1>Saved users</h1>
+	@foreach (var user in users)
+	{
+		<tr>
+			<td>@user.Id</td>
+			<td>@user.Name</td>
+			<td>@user.Email</td>
+			<td>@user.Address.Street</td>
+			<td>@user.Address.City</td>
+			<td>@user.Address.ZipCode</td>
+			<td>@user.Company.Name</td>
+			<td>@(user.Company.CatchPhrase ?? "Check your assumptions")</td>
+		</tr>
+	}
+
+	
 }
 
 @if(userSaved)
@@ -99,15 +116,20 @@ else if (formIsDone)
 
 @code {
 	private User user = new();
+	private JsonDataRepository jsonRep = new();
 	private List<User> users = new();
 	private int step = 1;
 	private bool formIsDone;
 	private bool userSaved = false;
 	private bool userDeleted = false;
 
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
 		step = 1;
+		if (File.Exists(jsonRep.GetFilePath()))
+		{
+			users = await jsonRep.GetUsers();
+		}
 	}
 	private void NextPage()
 	{
@@ -135,8 +157,7 @@ else if (formIsDone)
 	}
 	private void SaveUser()
 	{
-		//Save user to database logic
-		users.Add(user);
+		jsonRep.SaveUserToJson(user);
 		ResetForm();
 		userSaved = true;
 	}
