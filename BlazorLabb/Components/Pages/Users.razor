@@ -90,14 +90,15 @@ else
     </table>
     
 }
-
+<div style="display: flex; align-items: center; gap: 10px;">
 <button class="btn btn-primary" @onclick="ToggleListView">@btnMessage</button>
 <button class="btn btn-primary" @onclick="OnSortButtonClick">@sortBtnMessage</button>
-<select class="form-select" width="50px" @onchange="ChangeUserRepo">
+<select class="form-select" style="width: auto; max-width: 400px;" @onchange="ChangeUserRepo">
 	<option value="1">Fetch mock users (Default)</option>
 	<option value="2">Fetch users from API</option>
 	<option value="3">Fetch users from saved JSON file</option>
 </select>
+</div>
 @if (jsonNotLoaded)
 {
 	<p style="color: red">@jsonFileErrorMsg</p>
