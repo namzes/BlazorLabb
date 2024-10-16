@@ -59,50 +59,63 @@ else if (formIsDone)
 	userDeleted = false;
 	<table class="table">
 		<thead>
-		<tr>
-			<th>Randomly Generated User ID</th>
-			<th>Name</th>
-			<th>Email</th>
-			<th>Address</th>
-			<th>City</th>
-			<th>Zip</th>
-			<th>Company Name</th>
-			<th>Company Catchphrase</th>
-		</tr>
+			<tr>
+				<th>Randomly Generated User ID</th>
+				<th>Name</th>
+				<th>Email</th>
+				<th>Address</th>
+				<th>City</th>
+				<th>Zip</th>
+				<th>Company Name</th>
+				<th>Company Catchphrase</th>
+			</tr>
 		</thead>
 		<tbody>
-		<tr>
-			<td>@user.Id</td>
-			<td>@user.Name</td>
-			<td>@user.Email</td>
-			<td>@user.Address.Street</td>
-			<td>@user.Address.City</td>
-			<td>@user.Address.ZipCode</td>
-			<td>@user.Company.Name</td>
-			<td>@(user.Company.CatchPhrase ?? "Check your assumptions")</td>
-		</tr>
+			<tr>
+				<td>@user.Id</td>
+				<td>@user.Name</td>
+				<td>@user.Email</td>
+				<td>@user.Address.Street</td>
+				<td>@user.Address.City</td>
+				<td>@user.Address.ZipCode</td>
+				<td>@user.Company.Name</td>
+				<td>@(user.Company.CatchPhrase ?? "Check your assumptions")</td>
+			</tr>
+			<tr>
+				<td colspan="8" style="text-align: center;">
+					<button class="btn btn-primary" @onclick="SaveUser">Save User</button>
+					<button class="btn btn-primary" @onclick="DeleteUser">Discard User and Retry</button>
+				</td>
+			</tr>
+
+
+			<tr>
+				<td colspan="8" style="text-align: center; font-weight: bold;">
+					<h1>Saved Users</h1>
+				</td>
+			</tr>
+
+
+
+			@foreach (var user in users)
+			{
+
+				<tr>
+					<td>@user.Id</td>
+					<td>@user.Name</td>
+					<td>@user.Email</td>
+					<td>@user.Address.Street</td>
+					<td>@user.Address.City</td>
+					<td>@user.Address.ZipCode</td>
+					<td>@user.Company.Name</td>
+					<td>@(user.Company.CatchPhrase ?? "Check your assumptions")</td>
+				</tr>
+			}
 
 		</tbody>
 	</table>
-	<button class="btn btn-primary" @onclick="SaveUser">Save User</button>
-	<button class="btn btn-primary" @onclick="DeleteUser">Discard User and Retry</button>
 
-	<h1>Saved users</h1>
-	@foreach (var user in users)
-	{
-		<tr>
-			<td>@user.Id</td>
-			<td>@user.Name</td>
-			<td>@user.Email</td>
-			<td>@user.Address.Street</td>
-			<td>@user.Address.City</td>
-			<td>@user.Address.ZipCode</td>
-			<td>@user.Company.Name</td>
-			<td>@(user.Company.CatchPhrase ?? "Check your assumptions")</td>
-		</tr>
-	}
 
-	
 }
 
 @if(userSaved)
