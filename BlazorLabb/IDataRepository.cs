@@ -19,26 +19,14 @@ namespace BlazorLabb
 		}
 		public async Task<List<User>> GetUsers()
 		{
-			var responseCall = await _httpClient.GetAsync("https://jsonplaceholder.typicode.com/users");
-			if (responseCall.IsSuccessStatusCode)
-			{
-				var response = await responseCall.Content.ReadAsStringAsync();
-				var users = JsonSerializer.Deserialize<List<User>>(response, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-				return users ?? new List<User>();
-			}
-			return new List<User>();
+			var users = await _httpClient.GetFromJsonAsync<List<User>>("https://jsonplaceholder.typicode.com/users", new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+			return users ?? new List<User>();
 		}
 
 		public async Task<User> GetUser(int id)
 		{
-			var responseCall = await _httpClient.GetAsync($"https://jsonplaceholder.typicode.com/users/{id}");
-			if (responseCall.IsSuccessStatusCode)
-			{
-				var response = await responseCall.Content.ReadAsStringAsync();
-				var user = JsonSerializer.Deserialize<User>(response, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-				return user ?? new User();
-			}
-			return new User();
+			var user = await _httpClient.GetFromJsonAsync<User>($"https://jsonplaceholder.typicode.com/users/{id}", new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+			return user ?? new User();
 		}
 
 	}
@@ -227,8 +215,6 @@ namespace BlazorLabb
 			
 
 		}
-		
-
 		public async Task<User> GetUser(int id)
 		{
 
@@ -244,17 +230,34 @@ namespace BlazorLabb
 		public async Task<List<User>> GetUsers()
 		{
 			var users = new List<User>();
-			var jsonString = await File.ReadAllTextAsync(filePath);
-			users = JsonSerializer.Deserialize<List<User>>(jsonString);
-			return users ?? new List<User>();
+			try
+			{
+				using (var stream = File.OpenRead(filePath))
+				{
+					users = await JsonSerializer.DeserializeAsync<List<User>>(stream);
+					return users ?? new List<User>();
+				}
+			}
+			catch (FileNotFoundException)
+			{
+				return new List<User>();
+			}
+			catch (JsonException ex)
+			{
+				Console.WriteLine(ex); //Fixa
+				return new List<User>();
+			}
+
 		}
 		public async Task<User> GetUser(int id)
 		{
 			try
 			{
-				var jsonString = await File.ReadAllTextAsync(filePath);
-				var users = JsonSerializer.Deserialize<List<User>>(jsonString);
-				return users?.FirstOrDefault(user => user.Id == id) ?? new User();
+				using (var stream = File.OpenRead(filePath))
+				{
+					var users = await JsonSerializer.DeserializeAsync<List<User>>(stream);
+					return users?.FirstOrDefault(user => user.Id == id) ?? new User();
+				}
 			}
 			catch (FileNotFoundException)
 			{
