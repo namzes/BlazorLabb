@@ -1,1 +1,130 @@
-﻿X
+﻿@page "/todo/{userId:int}"
+@using System.ComponentModel.DataAnnotations.Schema
+@rendermode InteractiveServer
+
+<PageTitle>To Do List</PageTitle>
+
+<h3>To Do List for @userId: @user?.Name</h3>
+@if (user == null)
+{
+	<tr>
+		<td colspan="4">Loading user data...</td>
+	</tr>
+}
+else if (user.ToDos == null)
+{
+	<tr>
+		<td colspan="4">No to-dos available for this user.</td>
+	</tr>
+}
+else
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Title</th>
+				<th>Completion</th>
+			</tr>
+		</thead>
+		<tbody>
+
+		@foreach (var todo in user.ToDos)
+		{
+			<tr>
+				<td>@todo.Id</td>
+				<td>@todo.Title</td>
+				<td><input type="checkbox" @onchange="() => UpdateToDo(todo.Id)" checked="@todo.Completed" /></td>
+				<td>
+					<button @onclick="() => ToggleCollapse(todo.Id)">
+						@(collapsedState[todo.Id] ? "▼" : "▲")
+					</button>
+				</td>
+			</tr>
+
+			@if (!collapsedState[todo.Id])
+			{
+				<tr>
+					<td colspan="5">
+						<div class="alert alert-info">
+								<strong>Details:</strong> Do some work <strong>Completed:</strong> @todo.Completed
+						</div>
+					</td>
+				</tr>
+			}
+		}
+		</tbody>
+	</table>
+}
+
+
+
+@code
+{
+	[Parameter] 
+	public int userId { get; set; }
+	private User? user = new User();
+	private ApiDataRepository apiDataRep;
+	private Dictionary<int, bool> collapsedState = new();
+
+	public Todo()
+	{
+		apiDataRep = new ApiDataRepository(new HttpClient());
+	}
+	protected override async Task OnInitializedAsync()
+	{
+		user = await apiDataRep.GetUser(userId);
+		if (user != null)
+		{
+			user.ToDos = await apiDataRep.GetToDos(userId) ?? new List<ToDo>();
+			foreach (var todo in user.ToDos)
+			{
+				if (todo.Completed)
+				{
+					collapsedState[todo.Id] = true;
+				}
+				else
+				{
+					collapsedState[todo.Id] = false;
+				}
+				
+			}
+		}
+		
+		
+	}
+	private void UpdateToDo(int id)
+	{
+		if (user != null && user.ToDos != null)
+		{
+			var todo = user.ToDos.FirstOrDefault(todo => todo.Id == id);
+			if (todo != null)
+			{
+				todo.Completed = !todo.Completed;
+				if (todo.Completed)
+				{
+					collapsedState[todo.Id] = true;
+				}
+			}
+		}
+		
+			
+		
+		
+		
+		
+	}
+
+	private void ToggleCollapse(int id)
+	{
+		if (collapsedState.ContainsKey(id))
+		{
+			collapsedState[id] = !collapsedState[id];
+		}
+	}
+
+
+
+
+
+}
