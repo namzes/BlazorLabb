@@ -7,6 +7,8 @@ public partial class Users
 	private List<User> userList = new();
 	private LocalDataRepository localUserServices = new();
 	private JsonDataRepository jsonRep = new();
+	[Inject]
+	private NavigationManager? NavigationManager { get; set; }
 	private string loadingMessage = "Loading";
 	private string searchTerm = string.Empty;
 	private bool loadingNotDone = true;
@@ -116,4 +118,9 @@ public partial class Users
 			btnMessage = "Toggle Full List View";
 		}
 	}
+	private void RedirectToDoList(int userId)
+	{
+		NavigationManager?.NavigateTo($"/todo/{userId}");
+	}
+	
 }

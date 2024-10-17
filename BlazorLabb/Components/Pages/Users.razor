@@ -15,6 +15,10 @@ else
     <table class="table">
 	    <thead>
 	    <tr>
+		    @if (dataRepoChoice == "2")
+		    {
+			    <th>To Do</th>
+		    }
 		    <th>ID</th>
 		    <th>Name</th>
 		    @if (dataRepoChoice == "2")
@@ -24,14 +28,14 @@ else
 		    <th>Email</th>
 		    <th>Street</th>
 		    <th>City</th>
-		    @if (dataRepoChoice == "2") 
+		    @if (dataRepoChoice == "2")
 		    {
 			    <th>Suite</th>
 			    <th>Latitude</th>
 			    <th>Longitude</th>
 		    }
 		    <th>ZipCode</th>
-		    @if (dataRepoChoice == "1" || dataRepoChoice == "3") 
+		    @if (dataRepoChoice == "1" || dataRepoChoice == "3")
 		    {
 			    <th>Company</th>
 			    <th>Company Catchphrase</th>
@@ -48,7 +52,11 @@ else
 	    @foreach (var user in allUsers ? filteredUsers : filteredUsers.Take(5))
 	    {
 		    <tr>
-			    <td>@user.Id</td>
+				@if (dataRepoChoice == "2")
+				{
+					<td><button @onclick="() => RedirectToDoList(user.Id)">ToDo</button></td>
+				}
+				<td>@user.Id</td>
 			    <td>@user.Name</td>
 
 			    @if (dataRepoChoice == "2")
@@ -66,11 +74,6 @@ else
 				    <td>@(user.Address?.Geo?.Lat ?? "N/A")</td>
 				    <td>@(user.Address?.Geo?.Lng ?? "N/A")</td>
 			    }
-			    else
-			    {
-				    <td colspan="3">N/A</td> 
-			    }
-
 			    <td>@(user.Address?.ZipCode ?? "N/A")</td>
 
 			    @if (dataRepoChoice == "1" || dataRepoChoice == "3")

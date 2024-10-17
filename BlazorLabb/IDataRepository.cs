@@ -28,6 +28,11 @@ namespace BlazorLabb
 			var user = await _httpClient.GetFromJsonAsync<User>($"https://jsonplaceholder.typicode.com/users/{id}", new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 			return user ?? new User();
 		}
+		public async Task<List<ToDo>> GetToDos(int userId)
+		{
+			var todos = await _httpClient.GetFromJsonAsync<List<ToDo>>($"https://jsonplaceholder.typicode.com/todos?userId={userId}", new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+			return todos ?? new List<ToDo>();
+		}
 
 	}
 	public class LocalDataRepository : IDataRepository

@@ -20,13 +20,16 @@ namespace BlazorLabb
 		public Company Company { get; set; } = new Company();
 		public string? Phone { get; set; }
 		public string? Website { get; set; }
+		
 		public User()
 		{
 			Random random = new Random();
 			Id = random.Next(1000, 10000);
 		}
 
-		
+		public List<ToDo> ToDos { get; set; } = new List<ToDo>();
+
+
 
 
 	}
@@ -57,8 +60,15 @@ namespace BlazorLabb
 		public string? CatchPhrase { get; set; }
 		public string? Bs { get; set; }
 	}
+	public class ToDo
+	{
+		public int UserId { get; set; }
+		public int Id { get; set; }
+		public string? Title { get; set; }
+		public bool Completed { get; set; }
+	}
 
-	
+
 
 
 
