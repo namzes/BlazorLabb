@@ -22,9 +22,14 @@ namespace BlazorLabb
 			var responseCall = await _httpClient.GetAsync("https://jsonplaceholder.typicode.com/users");
 			if (responseCall.IsSuccessStatusCode)
 			{
-				var response = await responseCall.Content.ReadAsStringAsync();
-				var users = JsonSerializer.Deserialize<List<User>>(response, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-				return users ?? new List<User>();
+				using (var responseStream = await responseCall.Content.ReadAsStreamAsync())
+				{
+					var users = await JsonSerializer.DeserializeAsync<List<User>>(responseStream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+					return users ?? new List<User>();
+				}
+				//var response = await responseCall.Content.ReadAsStringAsync();
+				//var users = JsonSerializer.Deserialize<List<User>>(response, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+				//return users ?? new List<User>();
 			}
 			return new List<User>();
 		}
@@ -34,9 +39,14 @@ namespace BlazorLabb
 			var responseCall = await _httpClient.GetAsync($"https://jsonplaceholder.typicode.com/users/{id}");
 			if (responseCall.IsSuccessStatusCode)
 			{
-				var response = await responseCall.Content.ReadAsStringAsync();
-				var user = JsonSerializer.Deserialize<User>(response, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-				return user ?? new User();
+				using (var responseStream = await responseCall.Content.ReadAsStreamAsync())
+				{
+					var user = await JsonSerializer.DeserializeAsync<User>(responseStream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+					return user ?? new User();
+				}
+				//var response = await responseCall.Content.ReadAsStringAsync();
+				//var user = JsonSerializer.Deserialize<User>(response, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+				//return user ?? new User();
 			}
 			return new User();
 		}
@@ -239,22 +249,26 @@ namespace BlazorLabb
 
 	public class JsonDataRepository : IDataRepository
 	{
-		private string filePath = "C:\\Users\\nicke\\source\\repos\\BlazorLabb\\usersjson.json";
+		private string fileName = "usersjson.json";
 		public JsonDataRepository() { }
 		public async Task<List<User>> GetUsers()
 		{
 			var users = new List<User>();
-			var jsonString = await File.ReadAllTextAsync(filePath);
-			users = JsonSerializer.Deserialize<List<User>>(jsonString);
+			using (var fileStream = File.OpenRead(fileName))
+			{
+				users = await JsonSerializer.DeserializeAsync<List<User>>(fileStream);
+			}
 			return users ?? new List<User>();
 		}
 		public async Task<User> GetUser(int id)
 		{
 			try
 			{
-				var jsonString = await File.ReadAllTextAsync(filePath);
-				var users = JsonSerializer.Deserialize<List<User>>(jsonString);
-				return users?.FirstOrDefault(user => user.Id == id) ?? new User();
+				using (var fileStream = File.OpenRead(fileName))
+				{
+					var users = await JsonSerializer.DeserializeAsync<List<User>>(fileStream);
+					return users?.FirstOrDefault(user => user.Id == id) ?? new User();
+				}
 			}
 			catch (FileNotFoundException)
 			{
@@ -270,19 +284,19 @@ namespace BlazorLabb
 		public void SaveUserToJson(User user)
 		{
 			List<User> users = new List<User>();
-			if (File.Exists(filePath))
+			if (File.Exists(fileName))
 			{
-				var existingJsonString = File.ReadAllText(filePath);
+				var existingJsonString = File.ReadAllText(fileName);
 				users = JsonSerializer.Deserialize<List<User>>(existingJsonString) ?? new List<User>();
 			}
 			users.Add(user);
 			string newJsonString = JsonSerializer.Serialize(users);
-			File.WriteAllText(filePath, newJsonString);
+			File.WriteAllText(fileName, newJsonString);
 		}
 
 		public string GetFilePath()
 		{
-			return filePath;
+			return fileName;
 		}
 
 	}
