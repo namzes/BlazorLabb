@@ -310,6 +310,12 @@ namespace BlazorLabb
 			                              || user.Company.Name != null && user.Company.Name.Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
 		}
 
+		public static List<User> SortDataRepoById(this List<User> userList)
+		{
+			return userList.OrderBy(user => user.Id).ToList();
+		}
+		
+
 	}
 
 

@@ -15,7 +15,7 @@ public partial class Users
 	private string dataRepoChoice = "1";
 	private bool allUsers;
 	private string btnMessage = "Toggle Full List View";
-	private bool sortCompanyName = false;
+	private string sortUserChoice = "1";
 	private string sortBtnMessage = "Sort by Company Name";
     private bool jsonNotLoaded = false;
     private string jsonFileErrorMsg = "File does not exist!";
@@ -52,20 +52,29 @@ public partial class Users
 		userList = userList.SortDataRepoByCompanyName();
 	}
 
-	private void OnSortButtonClick()
+	private void SortUsersById()
 	{
-		if (!sortCompanyName)
-		{
-			SortUsersByCompanyName();
-			sortBtnMessage = "Sort by Name";
-		}
-		else
-		{
-			SortUsersByName();
-			sortBtnMessage = "Sort by Company name";
-		}
+		userList = userList.SortDataRepoById();
+	}
 
-		sortCompanyName = !sortCompanyName;
+	private void SortUserList(ChangeEventArgs e)
+	{
+		sortUserChoice = e?.Value?.ToString() ?? string.Empty;
+		if (int.TryParse(sortUserChoice, out var selectedSort))
+		{
+			if (selectedSort == 1)
+			{
+				userList = userList.SortDataRepoByName();
+			}
+			else if (selectedSort == 2)
+			{
+				userList = userList.SortDataRepoByCompanyName();
+			}
+			else if (selectedSort == 3)
+			{
+				userList = userList.SortDataRepoById();
+			}
+		}
 		StateHasChanged();
 	}
 
