@@ -5,6 +5,11 @@ using System.Text.Json;
 
 namespace BlazorLabb
 {
+	public class UserTodoHandler
+	{
+		public User user { get; set; } = new User();
+		public List<ToDo> ToDos { get; set; } = new List<ToDo>();
+	}
 	public class User
 	{
 		public int Id { get; set; }
@@ -27,7 +32,7 @@ namespace BlazorLabb
 			Id = random.Next(1000, 10000);
 		}
 
-		public List<ToDo> ToDos { get; set; } = new List<ToDo>();
+		
 
 
 

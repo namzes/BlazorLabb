@@ -4,9 +4,8 @@ namespace BlazorLabb
 {
 	public interface IDataRepository
 	{
-
 		Task<List<User>> GetUsers();
-		Task<User> GetUser(int id);
+		User GetUser(int id);
 	}
 
 	public class ApiDataRepository : IDataRepository
@@ -24,10 +23,9 @@ namespace BlazorLabb
 			return users ?? new List<User>();
 		}
 
-		public async Task<User> GetUser(int id)
+		public User GetUser(int id)
 		{
-			var user = await _httpClient.GetFromJsonAsync<User>($"https://jsonplaceholder.typicode.com/users/{id}", new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-			return user ?? new User();
+			return users?.GetUser(id) ?? new User();
 		}
 		public async Task<List<ToDo>> GetToDos(int userId)
 		{
@@ -38,11 +36,12 @@ namespace BlazorLabb
 	}
 	public class LocalDataRepository : IDataRepository
 	{
+		List<User>? users { get; set; }
 		public async Task<List<User>> GetUsers()
 		{
 			return await Task.Run(() =>
 			{
-				var users = new List<User>
+				users = new List<User>
 				{
 					new User
 					{
@@ -221,10 +220,10 @@ namespace BlazorLabb
 			
 
 		}
-		public async Task<User> GetUser(int id)
+		public User GetUser(int id)
 		{
 
-			return await Task.FromResult(new User());
+			return users?.GetUser(id) ?? new User();
 		}
 
 	}
@@ -232,10 +231,11 @@ namespace BlazorLabb
 	public class JsonDataRepository : IDataRepository
 	{
 		private string fileName = "usersjson.json";
+		List<User>? users { get; set; }
 		public JsonDataRepository() { }
 		public async Task<List<User>> GetUsers()
 		{
-			var users = new List<User>();
+			users = new List<User>();
 			try
 			{
 				using (var stream = File.OpenRead(fileName))
@@ -255,13 +255,12 @@ namespace BlazorLabb
 			}
 
 		}
-		public async Task<User> GetUser(int id)
+		public User GetUser(int id)
 		{
 			try
 			{
 				using (var stream = File.OpenRead(fileName))
 				{
-					var users = await JsonSerializer.DeserializeAsync<List<User>>(stream);
 					return users?.FirstOrDefault(user => user.Id == id) ?? new User();
 				}
 			}
@@ -294,9 +293,32 @@ namespace BlazorLabb
 			return fileName;
 		}
 
+		public int CheckUniqueId()
+		{
+			Random random = new Random();
+			if (users == null)
+			{
+				return random.Next(1000, 10000);
+			}
+
+			int id;
+			do
+			{
+				id = random.Next(1000, 10000);
+			} 
+			while (users.Any(user => user.Id == id));
+
+			return id;
+			
+		}
+
 	}
 	public static class DataRepoExtensions
 	{
+		public static List<User> SortById(this List<User> userList)
+		{
+			return userList.OrderBy(user => user.Id).ToList();
+		}
 		public static List<User> SortByName(this List<User> userList)
 		{
 			return userList.OrderBy(user => user.Name).ToList();
@@ -310,12 +332,6 @@ namespace BlazorLabb
 			return userList.Where(user => user.Name != null && user.Name.Contains(search, StringComparison.OrdinalIgnoreCase) 
 			                              || user.Company.Name != null && user.Company.Name.Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
 		}
-
-		public static List<User> SortById(this List<User> userList)
-		{
-			return userList.OrderBy(user => user.Id).ToList();
-		}
-
 		public static User GetUser(this List<User> users, int chosenId)
 		{
 			return users.FirstOrDefault(user => user.Id == chosenId) ?? new User();

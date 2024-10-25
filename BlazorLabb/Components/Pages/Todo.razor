@@ -4,14 +4,14 @@
 
 <PageTitle>To Do List</PageTitle>
 
-<h3>To Do List for @userId: @user?.Name</h3>
-@if (user == null)
+<h3>To Do List for @userTodoHandler.user.Name ID: @userId</h3>
+@if (userTodoHandler == null)
 {
 	<tr>
 		<td colspan="4">Loading user data...</td>
 	</tr>
 }
-else if (user.ToDos == null)
+else if (userTodoHandler.ToDos == null)
 {
 	<tr>
 		<td colspan="4">No to-dos available for this user.</td>
@@ -29,7 +29,7 @@ else
 		</thead>
 		<tbody>
 
-		@foreach (var todo in user.ToDos)
+			@foreach (var todo in userTodoHandler.ToDos)
 		{
 			<tr>
 				<td>@todo.Id</td>
@@ -63,7 +63,7 @@ else
 {
 	[Parameter] 
 	public int userId { get; set; }
-	private User? user = new User();
+	private UserTodoHandler userTodoHandler = new UserTodoHandler();
 	private ApiDataRepository apiDataRep;
 	private Dictionary<int, bool> collapsedState = new();
 
@@ -73,31 +73,26 @@ else
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		user = await apiDataRep.GetUser(userId);
-		if (user != null)
+		userTodoHandler.user = apiDataRep.GetUser(userId);
+
+		userTodoHandler.ToDos = await apiDataRep.GetToDos(userId);
+		foreach (var todo in userTodoHandler.ToDos)
 		{
-			user.ToDos = await apiDataRep.GetToDos(userId) ?? new List<ToDo>();
-			foreach (var todo in user.ToDos)
+			if (todo.Completed)
 			{
-				if (todo.Completed)
-				{
-					collapsedState[todo.Id] = true;
-				}
-				else
-				{
-					collapsedState[todo.Id] = false;
-				}
-				
+				collapsedState[todo.Id] = true;
 			}
+			else
+			{
+				collapsedState[todo.Id] = false;
+			}
+
 		}
-		
-		
 	}
 	private void UpdateToDo(int id)
 	{
-		if (user != null && user.ToDos != null)
-		{
-			var todo = user.ToDos.FirstOrDefault(todo => todo.Id == id);
+		
+			var todo = userTodoHandler.ToDos.FirstOrDefault(todo => todo.Id == id);
 			if (todo != null)
 			{
 				todo.Completed = !todo.Completed;
@@ -106,13 +101,6 @@ else
 					collapsedState[todo.Id] = true;
 				}
 			}
-		}
-		
-			
-		
-		
-		
-		
 	}
 
 	private void ToggleCollapse(int id)

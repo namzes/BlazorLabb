@@ -16,7 +16,6 @@ public partial class Users
 	private bool allUsers;
 	private string btnMessage = "Toggle Full List View";
 	private string sortUserChoice = "1";
-	private string sortBtnMessage = "Sort by Company Name";
     private bool jsonNotLoaded = false;
     private string jsonFileErrorMsg = "File does not exist!";
 	private IEnumerable<User> filteredUsers => userList.SearchByNameOrCompany(searchTerm);
@@ -24,7 +23,7 @@ public partial class Users
 	protected override async Task OnInitializedAsync()
 	{
 		userList = await localUserServices.GetUsers();
-		SortUsersByName();
+		userList.SortByName();
 		_ = SimulateLoading();
 	}
 
@@ -66,17 +65,17 @@ public partial class Users
 			{
 				case 1:
 				{
-					userList = userList.SortByName();
+					SortUsersByName();
 					break;
 				}
 				case 2:
 				{
-					userList = userList.SortByCompany();
+					SortUsersByCompanyName();
 					break;
 				}
 				case 3:
 				{
-					userList = userList.SortById();
+					SortUsersById();
 					break;
 				}
 				default:
@@ -88,9 +87,9 @@ public partial class Users
 		StateHasChanged();
 	}
 
-	private async Task ChangeUserRepo(ChangeEventArgs e)
+	private async Task ChangeUserList(ChangeEventArgs e)
 	{
-		dataRepoChoice = e?.Value?.ToString() ?? string.Empty;
+		dataRepoChoice = e.Value?.ToString() ?? string.Empty;
 		loadingNotDone = true;
 		_ = SimulateLoading();
 		if (int.TryParse(dataRepoChoice, out var selectedId))
