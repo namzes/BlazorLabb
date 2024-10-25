@@ -19,7 +19,7 @@ public partial class Users
 	private string sortBtnMessage = "Sort by Company Name";
     private bool jsonNotLoaded = false;
     private string jsonFileErrorMsg = "File does not exist!";
-	private IEnumerable<User> filteredUsers => userList.FilterDataRepo(searchTerm);
+	private IEnumerable<User> filteredUsers => userList.SearchByNameOrCompany(searchTerm);
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -44,17 +44,17 @@ public partial class Users
 
 	private void SortUsersByName()
 	{
-		userList = userList.SortDataRepoByName();
+		userList = userList.SortByName();
 	}
 
 	private void SortUsersByCompanyName()
 	{
-		userList = userList.SortDataRepoByCompanyName();
+		userList = userList.SortByCompany();
 	}
 
 	private void SortUsersById()
 	{
-		userList = userList.SortDataRepoById();
+		userList = userList.SortById();
 	}
 
 	private void SortUserList(ChangeEventArgs e)
@@ -62,17 +62,27 @@ public partial class Users
 		sortUserChoice = e?.Value?.ToString() ?? string.Empty;
 		if (int.TryParse(sortUserChoice, out var selectedSort))
 		{
-			if (selectedSort == 1)
+			switch (selectedSort)
 			{
-				userList = userList.SortDataRepoByName();
-			}
-			else if (selectedSort == 2)
-			{
-				userList = userList.SortDataRepoByCompanyName();
-			}
-			else if (selectedSort == 3)
-			{
-				userList = userList.SortDataRepoById();
+				case 1:
+				{
+					userList = userList.SortByName();
+					break;
+				}
+				case 2:
+				{
+					userList = userList.SortByCompany();
+					break;
+				}
+				case 3:
+				{
+					userList = userList.SortById();
+					break;
+				}
+				default:
+				{
+					throw new ArgumentOutOfRangeException();
+				}
 			}
 		}
 		StateHasChanged();
@@ -85,28 +95,38 @@ public partial class Users
 		_ = SimulateLoading();
 		if (int.TryParse(dataRepoChoice, out var selectedId))
 		{
-			if (selectedId == 1)
+			switch (selectedId)
 			{
-				userList = await localUserServices.GetUsers();
-                jsonNotLoaded = false;
-            }
-			else if (selectedId == 2)
-			{
-				var apiDataRep = new ApiDataRepository(new HttpClient());
-				userList = await apiDataRep.GetUsers();
-                jsonNotLoaded = false;
-            }
-			else if (selectedId == 3)
-			{
-				if (File.Exists(jsonRep.GetFilePath()))
+				case 1:
 				{
-					var jsonDataRep = new JsonDataRepository();
-					userList = await jsonDataRep.GetUsers();
+					userList = await localUserServices.GetUsers();
+					jsonNotLoaded = false;
+					break;
 				}
-                else
-                {
-                    jsonNotLoaded = true;
-                }
+				case 2:
+				{
+					var apiDataRep = new ApiDataRepository(new HttpClient());
+					userList = await apiDataRep.GetUsers();
+					jsonNotLoaded = false;
+					break;
+				}
+				case 3:
+				{
+					if (File.Exists(jsonRep.GetFilePath()))
+					{
+						var jsonDataRep = new JsonDataRepository();
+						userList = await jsonDataRep.GetUsers();
+					}
+					else
+					{
+						jsonNotLoaded = true;
+					}
+					break;
+				}
+				default:
+				{
+					throw new ArgumentOutOfRangeException();
+				}
 			}
 		}
 
@@ -116,16 +136,8 @@ public partial class Users
 
 	private void ToggleListView()
 	{
-		if (!allUsers)
-		{
-			allUsers = true;
-			btnMessage = "Toggle Small List View";
-		}
-		else if (allUsers)
-		{
-			allUsers = false;
-			btnMessage = "Toggle Full List View";
-		}
+		allUsers = !allUsers;
+		btnMessage = allUsers ? "Toggle Full List View" : "Toggle Small List View";
 	}
 	private void RedirectToDoList(int userId)
 	{

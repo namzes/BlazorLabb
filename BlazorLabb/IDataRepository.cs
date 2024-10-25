@@ -11,6 +11,7 @@ namespace BlazorLabb
 
 	public class ApiDataRepository : IDataRepository
 	{
+		List<User>? users { get; set; }
 		private readonly HttpClient _httpClient;
 
 		public ApiDataRepository(HttpClient httpClient)
@@ -19,7 +20,7 @@ namespace BlazorLabb
 		}
 		public async Task<List<User>> GetUsers()
 		{
-			var users = await _httpClient.GetFromJsonAsync<List<User>>("https://jsonplaceholder.typicode.com/users", new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+			users = await _httpClient.GetFromJsonAsync<List<User>>("https://jsonplaceholder.typicode.com/users", new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 			return users ?? new List<User>();
 		}
 
@@ -249,7 +250,7 @@ namespace BlazorLabb
 			}
 			catch (JsonException ex)
 			{
-				Console.WriteLine(ex); //Fixa
+				Console.WriteLine(ex);
 				return new List<User>();
 			}
 
@@ -270,7 +271,7 @@ namespace BlazorLabb
 			}
 			catch (JsonException ex)
 			{
-				Console.WriteLine(ex); //Fixa
+				Console.WriteLine(ex);
 				return new User();
 			}
 			
@@ -296,25 +297,30 @@ namespace BlazorLabb
 	}
 	public static class DataRepoExtensions
 	{
-		public static List<User> SortDataRepoByName(this List<User> userList)
+		public static List<User> SortByName(this List<User> userList)
 		{
 			return userList.OrderBy(user => user.Name).ToList();
 		}
-		public static List<User> SortDataRepoByCompanyName(this List<User> userList)
+		public static List<User> SortByCompany(this List<User> userList)
 		{
 			return userList.OrderBy(user => user.Company.Name).ToList();
 		}
-		public static List<User> FilterDataRepo(this List<User> userList, string search)
+		public static List<User> SearchByNameOrCompany(this List<User> userList, string search)
 		{
 			return userList.Where(user => user.Name != null && user.Name.Contains(search, StringComparison.OrdinalIgnoreCase) 
 			                              || user.Company.Name != null && user.Company.Name.Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
 		}
 
-		public static List<User> SortDataRepoById(this List<User> userList)
+		public static List<User> SortById(this List<User> userList)
 		{
 			return userList.OrderBy(user => user.Id).ToList();
 		}
-		
+
+		public static User GetUser(this List<User> users, int chosenId)
+		{
+			return users.FirstOrDefault(user => user.Id == chosenId) ?? new User();
+		}
+
 
 	}
 
