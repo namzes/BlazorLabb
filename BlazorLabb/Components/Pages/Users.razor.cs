@@ -6,6 +6,7 @@ public partial class Users
 {
 	private List<User> userList = new();
 	private LocalDataRepository localUserServices = new();
+	private ApiDataRepository apiDataRep = new ApiDataRepository(new HttpClient());
 	private JsonDataRepository jsonRep = new();
 	[Inject]
 	private NavigationManager? NavigationManager { get; set; }
@@ -16,7 +17,7 @@ public partial class Users
 	private bool allUsers;
 	private string btnMessage = "Toggle Full List View";
 	private string sortUserChoice = "1";
-    private bool jsonNotLoaded = false;
+    private bool jsonNotLoaded;
     private string jsonFileErrorMsg = "File does not exist!";
 	private IEnumerable<User> filteredUsers => userList.SearchByNameOrCompany(searchTerm);
 
@@ -58,7 +59,7 @@ public partial class Users
 
 	private void SortUserList(ChangeEventArgs e)
 	{
-		sortUserChoice = e?.Value?.ToString() ?? string.Empty;
+		sortUserChoice = e.Value?.ToString() ?? string.Empty;
 		if (int.TryParse(sortUserChoice, out var selectedSort))
 		{
 			switch (selectedSort)
@@ -91,7 +92,7 @@ public partial class Users
 	{
 		dataRepoChoice = e.Value?.ToString() ?? string.Empty;
 		loadingNotDone = true;
-		_ = SimulateLoading();
+		await SimulateLoading();
 		if (int.TryParse(dataRepoChoice, out var selectedId))
 		{
 			switch (selectedId)
@@ -104,7 +105,6 @@ public partial class Users
 				}
 				case 2:
 				{
-					var apiDataRep = new ApiDataRepository(new HttpClient());
 					userList = await apiDataRep.GetUsers();
 					jsonNotLoaded = false;
 					break;

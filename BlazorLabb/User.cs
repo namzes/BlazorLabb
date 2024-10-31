@@ -7,8 +7,10 @@ namespace BlazorLabb
 {
 	public class UserTodoHandler
 	{
-		public User user { get; set; } = new User();
-		public List<ToDo> ToDos { get; set; } = new List<ToDo>();
+		public User user { get; set; } = new();
+		public List<ToDo> ToDos { get; set; } = new();
+
+
 	}
 	public class User
 	{
@@ -28,11 +30,14 @@ namespace BlazorLabb
 		
 		public User()
 		{
-			Random random = new Random();
-			Id = random.Next(1000, 10000);
+			Id = ApplyRandomId();
 		}
 
-		
+		public int ApplyRandomId()
+		{
+			var json = new JsonDataRepository();
+			return json.CheckUniqueId();
+		}
 
 
 

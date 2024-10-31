@@ -337,7 +337,18 @@ namespace BlazorLabb
 			return users.FirstOrDefault(user => user.Id == chosenId) ?? new User();
 		}
 
+		public static bool ToggleToDoCompletion(this UserTodoHandler userTodoHandler, int id)
+		{
 
+			var todo = userTodoHandler.ToDos.FirstOrDefault(todo => todo.Id == id);
+			if (todo != null)
+			{
+				todo.Completed = !todo.Completed;
+				return todo.Completed;
+			}
+			return false;
+
+		}
 	}
 
 
