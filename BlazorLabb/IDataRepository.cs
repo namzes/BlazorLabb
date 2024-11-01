@@ -10,7 +10,7 @@ namespace BlazorLabb
 
 	public class ApiDataRepository : IDataRepository
 	{
-		List<User>? users { get; set; }
+		private List<User>? users { get; set; }
 		private readonly HttpClient _httpClient;
 
 		public ApiDataRepository(HttpClient httpClient)
@@ -36,7 +36,7 @@ namespace BlazorLabb
 	}
 	public class LocalDataRepository : IDataRepository
 	{
-		List<User>? users { get; set; }
+		private List<User>? users { get; set; }
 		public async Task<List<User>> GetUsers()
 		{
 			return await Task.Run(() =>
@@ -231,14 +231,14 @@ namespace BlazorLabb
 	public class JsonDataRepository : IDataRepository
 	{
 		private string fileName = "usersjson.json";
-		List<User>? users { get; set; }
+		private List<User>? users { get; set; }
 		public JsonDataRepository() { }
 		public async Task<List<User>> GetUsers()
 		{
 			users = new List<User>();
 			try
 			{
-				using (var stream = File.OpenRead(fileName))
+				using (var stream = File.OpenRead(GetFilePath()))
 				{
 					users = await JsonSerializer.DeserializeAsync<List<User>>(stream);
 					return users ?? new List<User>();
@@ -259,7 +259,7 @@ namespace BlazorLabb
 		{
 			try
 			{
-				using (var stream = File.OpenRead(fileName))
+				using (var stream = File.OpenRead(GetFilePath()))
 				{
 					return users?.FirstOrDefault(user => user.Id == id) ?? new User();
 				}
@@ -278,14 +278,14 @@ namespace BlazorLabb
 		public void SaveUserToJson(User user)
 		{
 			List<User> users = new List<User>();
-			if (File.Exists(fileName))
+			if (File.Exists(GetFilePath()))
 			{
-				var existingJsonString = File.ReadAllText(fileName);
+				var existingJsonString = File.ReadAllText(GetFilePath());
 				users = JsonSerializer.Deserialize<List<User>>(existingJsonString) ?? new List<User>();
 			}
 			users.Add(user);
 			string newJsonString = JsonSerializer.Serialize(users);
-			File.WriteAllText(fileName, newJsonString);
+			File.WriteAllText(GetFilePath(), newJsonString);
 		}
 
 		public string GetFilePath()
@@ -300,14 +300,12 @@ namespace BlazorLabb
 			{
 				return random.Next(1000, 10000);
 			}
-
 			int id;
 			do
 			{
 				id = random.Next(1000, 10000);
 			} 
 			while (users.Any(user => user.Id == id));
-
 			return id;
 			
 		}
@@ -347,7 +345,6 @@ namespace BlazorLabb
 				return todo.Completed;
 			}
 			return false;
-
 		}
 	}
 

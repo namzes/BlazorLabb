@@ -7,7 +7,7 @@
 
 @if (loadingNotDone)
 {
-	<p style="font-size: 36px; color: red;">@(new MarkupString(loadingMessage))</p>
+	<p style="font-size: 100px; color: red;">@(new MarkupString(loadingMessage))</p>
 }
 else
 {
@@ -35,17 +35,13 @@ else
 			    <th>Longitude</th>
 		    }
 		    <th>ZipCode</th>
-		    @if (dataRepoChoice == "1" || dataRepoChoice == "3")
+		    <th>Company</th>
+		    <th>Company Catchphrase</th>
+		    @if (dataRepoChoice == "2")
 		    {
-			    <th>Company</th>
-			    <th>Company Catchphrase</th>
-		    }
-		    else if (dataRepoChoice == "2")
-		    {
-			    <th>Company</th>
-			    <th>Company Catchphrase</th>
 			    <th>Business Service</th>
 		    }
+		    
 	    </tr>
 	    </thead>
 	    <tbody>
