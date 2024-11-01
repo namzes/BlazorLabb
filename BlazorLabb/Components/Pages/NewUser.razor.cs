@@ -7,8 +7,8 @@ public partial class NewUser
 	private List<User> users = new();
 	private int step = 1;
 	private bool formIsDone;
-	private bool userSaved = false;
-	private bool userDeleted = false;
+	private bool userSaved;
+	private bool userDeleted;
 
 	protected override async Task OnInitializedAsync()
 	{
