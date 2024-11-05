@@ -6,7 +6,7 @@ public partial class Users
 {
 	private List<User> userList = new();
 	private LocalDataRepository localUserServices = new();
-	private ApiDataRepository apiDataRep = new ApiDataRepository(new HttpClient());
+	private ApiDataRepository apiDataRep = new(new HttpClient());
 	private JsonDataRepository jsonRep = new();
 	[Inject]
 	private NavigationManager? NavigationManager { get; set; }
@@ -15,7 +15,7 @@ public partial class Users
 	private bool loadingNotDone = true;
 	private string dataRepoChoice = "1";
 	private bool allUsers;
-	private string btnMessage = "Toggle Full List View";
+	private string btnMessage = "Toggle Full List";
 	private string sortUserChoice = "1";
     private bool jsonNotLoaded;
     private string jsonFileErrorMsg = "File does not exist!";
@@ -24,7 +24,7 @@ public partial class Users
 	protected override async Task OnInitializedAsync()
 	{
 		userList = await localUserServices.GetUsers();
-		userList.SortByName();
+		SortUsersByName();
 		_ = SimulateLoading();
 	}
 
@@ -39,6 +39,7 @@ public partial class Users
 		}
 
 		loadingNotDone = false;
+		loadingMessage = "Loading";
 		StateHasChanged();
 	}
 
@@ -136,7 +137,7 @@ public partial class Users
 	private void ToggleListView()
 	{
 		allUsers = !allUsers;
-		btnMessage = allUsers ? "Toggle Full List View" : "Toggle Small List View";
+		btnMessage = allUsers ? "Toggle Small List" : "Toggle Full List";
 	}
 	private void RedirectToDoList(int userId)
 	{
