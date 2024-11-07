@@ -7,7 +7,6 @@ namespace BlazorLabb
 		Task<List<User>> GetUsers();
 		User GetUser(int id);
 	}
-
 	public class ApiDataRepository : IDataRepository
 	{
 		private List<User>? users { get; set; }
@@ -216,9 +215,6 @@ namespace BlazorLabb
 				};
 				return users;
 			});
-
-			
-
 		}
 		public User GetUser(int id)
 		{
@@ -227,12 +223,10 @@ namespace BlazorLabb
 		}
 
 	}
-
 	public class JsonDataRepository : IDataRepository
 	{
 		private string fileName = "usersjson.json";
 		private List<User>? users { get; set; }
-		public JsonDataRepository() { }
 		public async Task<List<User>> GetUsers()
 		{
 			users = new List<User>();
@@ -334,7 +328,6 @@ namespace BlazorLabb
 		{
 			return users.FirstOrDefault(user => user.Id == chosenId) ?? new User();
 		}
-
 		public static bool ToggleToDoCompletion(this UserTodoHandler userTodoHandler, int id)
 		{
 
