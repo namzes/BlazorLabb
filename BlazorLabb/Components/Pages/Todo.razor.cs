@@ -19,7 +19,7 @@ public partial class Todo
 	{
 		userTodoHandler.user = apiDataRep.GetUser(userId);
 
-		userTodoHandler.ToDos = await apiDataRep.GetToDos(userId);
+		userTodoHandler.ToDos = await apiDataRep.GetToDosAsync(userId);
 		foreach (var todo in userTodoHandler.ToDos)
 		{
 			if (todo.Completed)

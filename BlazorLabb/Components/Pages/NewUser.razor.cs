@@ -4,7 +4,7 @@ public partial class NewUser
 {
 	private User user = new();
 	private JsonDataRepository jsonRep = new();
-	private List<User> users = new();
+	private List<User>? users = new();
 	private int step = 1;
 	private bool formIsDone;
 	private bool userSaved;
@@ -15,10 +15,13 @@ public partial class NewUser
 		step = 1;
 		if (File.Exists(jsonRep.GetFilePath()))
 		{
-			users = await jsonRep.GetUsers();
+			users = await jsonRep.GetUsersAsync() ?? new();
+		}
+		else
+		{
+			users = new List<User>(); 
 		}
 	}
-
 	private void NextPage()
 	{
 		userSaved = false;
@@ -28,6 +31,7 @@ public partial class NewUser
 
 	private void FinalSubmit()
 	{
+		
 		formIsDone = true;
 		step = 0;
 	}
@@ -39,14 +43,29 @@ public partial class NewUser
 		formIsDone = false;
 	}
 
-	private void DeleteUser()
+	private void DiscardUser()
 	{
 		ResetForm();
 		userDeleted = true;
 	}
 
+	private void DeleteUser(int id)
+	{
+		jsonRep.DeleteUserFromJson(id);
+		if (users != null)
+		{
+			var userToDelete = users.FirstOrDefault(user => user.Id == id);
+			if (userToDelete != null)
+			{
+				users.Remove(userToDelete); 
+			}
+		}
+		StateHasChanged();
+	}
+
 	private void SaveUser()
 	{
+		user.Id = jsonRep.ApplyRandomId();
 		jsonRep.SaveUserToJson(user);
 		ResetForm();
 		userSaved = true;

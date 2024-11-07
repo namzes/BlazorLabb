@@ -68,11 +68,12 @@ else if (formIsDone)
 				<th>Zip</th>
 				<th>Company Name</th>
 				<th>Company Catchphrase</th>
+				<th>Delete User</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr>
-				<td>@user.Id</td>
+				<td>Assigned when saving user*</td>
 				<td>@user.Name</td>
 				<td>@user.Email</td>
 				<td>@user.Address.Street</td>
@@ -80,11 +81,13 @@ else if (formIsDone)
 				<td>@user.Address.ZipCode</td>
 				<td>@user.Company.Name</td>
 				<td>@(user.Company.CatchPhrase ?? "Check your assumptions")</td>
+				<td>
+				<button class="btn btn-small btn-danger" @onclick="DiscardUser">-</button>
+				</td>
 			</tr>
 			<tr>
 				<td colspan="8" style="text-align: center;">
 					<button class="btn btn-primary" @onclick="SaveUser">Save User</button>
-					<button class="btn btn-primary" @onclick="DeleteUser">Discard User and Retry</button>
 				</td>
 			</tr>
 
@@ -96,23 +99,28 @@ else if (formIsDone)
 			</tr>
 
 
-
-			@foreach (var user in users)
+			@if (users != null)
 			{
+				@foreach (var user in users)
+				{
 
-				<tr>
-					<td>@user.Id</td>
-					<td>@user.Name</td>
-					<td>@user.Email</td>
-					<td>@user.Address.Street</td>
-					<td>@user.Address.City</td>
-					<td>@user.Address.ZipCode</td>
-					<td>@user.Company.Name</td>
-					<td>@(user.Company.CatchPhrase ?? "Check your assumptions")</td>
-				</tr>
+					<tr>
+						<td>@user.Id</td>
+						<td>@user.Name</td>
+						<td>@user.Email</td>
+						<td>@user.Address.Street</td>
+						<td>@user.Address.City</td>
+						<td>@user.Address.ZipCode</td>
+						<td>@user.Company.Name</td>
+						<td>@(user.Company.CatchPhrase ?? "Check your assumptions")</td>
+						<td>
+							<button class="btn btn-small btn-danger" @onclick="() => DeleteUser(user.Id)">-</button>
+						</td>
+					</tr>
+				}
 			}
 
-		</tbody>
+	</tbody>
 	</table>
 
 
@@ -120,9 +128,9 @@ else if (formIsDone)
 
 @if(userSaved)
 {
-	<p style ="color: green; font-weight: bold;">User @user.Name saved!</p>
+	<p style ="color: green; font-weight: bold;">User saved!</p>
 }
 @if (userDeleted)
 {
-	<p style="color: red; font-weight: bold;">User @user.Name discarded!</p>
+	<p style="color: red; font-weight: bold;">User discarded!</p>
 }

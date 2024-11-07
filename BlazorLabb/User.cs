@@ -30,15 +30,8 @@ namespace BlazorLabb
 		
 		public User()
 		{
-			Id = ApplyRandomId();
+			
 		}
-
-		public int ApplyRandomId()
-		{
-			var json = new JsonDataRepository();
-			return json.CheckUniqueId();
-		}
-
 
 
 
@@ -55,12 +48,13 @@ namespace BlazorLabb
 		[StringLength(5, ErrorMessage = "Zip can't be longer than 5 characters")]
 		public string? ZipCode { get; set; }
 		public string? Suite { get; set; }
-		public DataRepoGeo? Geo { get; set; } = new DataRepoGeo();
-		public class DataRepoGeo
-		{
-			public string? Lat { get; set; }
-			public string? Lng { get; set; }
-		}
+		public GeoLocation? Geo { get; set; } = new GeoLocation();
+		
+	}
+	public class GeoLocation
+	{
+		public string? Lat { get; set; }
+		public string? Lng { get; set; }
 	}
 
 	public class Company

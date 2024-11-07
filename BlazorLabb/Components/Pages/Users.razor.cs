@@ -23,7 +23,7 @@ public partial class Users
 
 	protected override async Task OnInitializedAsync()
 	{
-		userList = await localUserServices.GetUsers();
+		userList = await localUserServices.GetUsersAsync();
 		SortUsersByName();
 		_ = SimulateLoading();
 	}
@@ -100,13 +100,13 @@ public partial class Users
 			{
 				case 1:
 				{
-					userList = await localUserServices.GetUsers();
+					userList = await localUserServices.GetUsersAsync();
 					jsonNotLoaded = false;
 					break;
 				}
 				case 2:
 				{
-					userList = await apiDataRep.GetUsers();
+					userList = await apiDataRep.GetUsersAsync();
 					jsonNotLoaded = false;
 					break;
 				}
@@ -115,7 +115,7 @@ public partial class Users
 					if (File.Exists(jsonRep.GetFilePath()))
 					{
 						var jsonDataRep = new JsonDataRepository();
-						userList = await jsonDataRep.GetUsers();
+						userList = await jsonDataRep.GetUsersAsync();
 					}
 					else
 					{

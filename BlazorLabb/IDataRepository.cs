@@ -4,7 +4,7 @@ namespace BlazorLabb
 {
 	public interface IDataRepository
 	{
-		Task<List<User>> GetUsers();
+		Task<List<User>> GetUsersAsync();
 		User GetUser(int id);
 	}
 	public class ApiDataRepository : IDataRepository
@@ -16,7 +16,7 @@ namespace BlazorLabb
 		{
 			_httpClient = httpClient;
 		}
-		public async Task<List<User>> GetUsers()
+		public async Task<List<User>> GetUsersAsync()
 		{
 			users = await _httpClient.GetFromJsonAsync<List<User>>("https://jsonplaceholder.typicode.com/users", new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 			return users ?? new List<User>();
@@ -26,7 +26,7 @@ namespace BlazorLabb
 		{
 			return users?.GetUser(id) ?? new User();
 		}
-		public async Task<List<ToDo>> GetToDos(int userId)
+		public async Task<List<ToDo>> GetToDosAsync(int userId)
 		{
 			var todos = await _httpClient.GetFromJsonAsync<List<ToDo>>($"https://jsonplaceholder.typicode.com/todos?userId={userId}", new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 			return todos ?? new List<ToDo>();
@@ -36,7 +36,7 @@ namespace BlazorLabb
 	public class LocalDataRepository : IDataRepository
 	{
 		private List<User>? users { get; set; }
-		public async Task<List<User>> GetUsers()
+		public async Task<List<User>> GetUsersAsync()
 		{
 			return await Task.Run(() =>
 			{
@@ -227,7 +227,7 @@ namespace BlazorLabb
 	{
 		private string fileName = "usersjson.json";
 		private List<User>? users { get; set; }
-		public async Task<List<User>> GetUsers()
+		public async Task<List<User>> GetUsersAsync()
 		{
 			users = new List<User>();
 			try
@@ -272,22 +272,34 @@ namespace BlazorLabb
 		public void SaveUserToJson(User user)
 		{
 			List<User> users = new List<User>();
-			if (File.Exists(GetFilePath()))
-			{
-				var existingJsonString = File.ReadAllText(GetFilePath());
-				users = JsonSerializer.Deserialize<List<User>>(existingJsonString) ?? new List<User>();
-			}
+			users = users.JsonDeserializeUsersFile();
 			users.Add(user);
 			string newJsonString = JsonSerializer.Serialize(users);
 			File.WriteAllText(GetFilePath(), newJsonString);
 		}
 
+		public void DeleteUserFromJson(int id)
+		{
+			List<User> users = new List<User>();
+			users = users.JsonDeserializeUsersFile();
+			int index = users.FindIndex(user => id == user.Id);
+			users.RemoveAt(index);
+			string newJsonString = JsonSerializer.Serialize(users);
+			File.WriteAllText(GetFilePath(), newJsonString);
+		}
+
+		
+	
+
 		public string GetFilePath()
 		{
 			return fileName;
 		}
-
-		public int CheckUniqueId()
+		public int ApplyRandomId()
+		{
+			return CheckUniqueId();
+		}
+		private int CheckUniqueId()
 		{
 			Random random = new Random();
 			if (users == null)
@@ -338,6 +350,17 @@ namespace BlazorLabb
 				return todo.Completed;
 			}
 			return false;
+		}
+		public static List<User> JsonDeserializeUsersFile(this List<User> users)
+		{
+			JsonDataRepository json = new();
+			if (File.Exists(json.GetFilePath()))
+			{
+				var existingJsonString = File.ReadAllText(json.GetFilePath());
+				return JsonSerializer.Deserialize<List<User>>(existingJsonString) ?? new();
+			}
+			return new();
+
 		}
 	}
 
