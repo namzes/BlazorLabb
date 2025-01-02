@@ -11,92 +11,80 @@
 }
 else
 {
-    <input type="text" @bind="searchTerm" placeholder="Search by name or company" size="50" />
-    <table class="table">
-	    <thead>
-	    <tr>
-		    @if (dataRepoChoice == "2")
-		    {
-			    <th>To Do</th>
-		    }
-		    <th>ID</th>
-		    <th>Name</th>
-		    @if (dataRepoChoice == "2")
-		    {
-			    <th>Username</th>
-		    }
-		    <th>Email</th>
-		    <th>Street</th>
-		    <th>City</th>
-		    @if (dataRepoChoice == "2")
-		    {
-			    <th>Suite</th>
-			    <th>Latitude</th>
-			    <th>Longitude</th>
-		    }
-		    <th>ZipCode</th>
-		    <th>Company</th>
-		    <th>Company Catchphrase</th>
-		    @if (dataRepoChoice == "2")
-		    {
-			    <th>Business Service</th>
-		    }
-		    
-	    </tr>
-	    </thead>
-	    <tbody>
-	    @foreach (var user in allUsers ? filteredUsers : filteredUsers.Take(5))
-	    {
-		    <tr>
+	<input type="text" @bind="searchTerm" placeholder="Search by name or company" size="50" />
+	<table class="table">
+		<thead>
+			<tr>
 				@if (dataRepoChoice == "2")
 				{
-					<td><button @onclick="() => RedirectToDoList(user.Id)">ToDo</button></td>
+					<th>To Do</th>
 				}
-				<td>@user.Id</td>
-			    <td>@user.Name</td>
+				<th class="clickable-header" style="cursor: pointer; border: 2px solid black;" @onclick="() => userList = userList.SortUsers(user => user.Id)">ID</th>
+				<th class="clickable-header" style="cursor: pointer; border: 2px solid black;" @onclick="() => userList = userList.SortUsers(user => user.Name ?? string.Empty)">Name</th>
+				@if (dataRepoChoice == "2")
+				{
+					<th>Username</th>
+				}
+				<th class="clickable-header" style="cursor: pointer; border: 2px solid black;" @onclick="() => userList = userList.SortUsers(user => user.Email ?? string.Empty)">Email</th>
+				<th class="clickable-header" style="cursor: pointer; border: 2px solid black;" @onclick="() => userList = userList.SortUsers(user => user.Address.Street ?? string.Empty)">Street</th>
+				<th class="clickable-header" style="cursor: pointer; border: 2px solid black;" @onclick="() => userList = userList.SortUsers(user => user.Address.City ?? string.Empty)">City</th>
+				@if (dataRepoChoice == "2")
+				{
+					<th>Suite</th>
+					<th>Latitude</th>
+					<th>Longitude</th>
+				}
+				<th class="clickable-header" style="cursor: pointer; border: 2px solid black;" @onclick="() => userList = userList.SortUsers(user => user.Address.ZipCode ?? string.Empty)">ZipCode</th>
+				<th class="clickable-header" style="cursor: pointer; border: 2px solid black;" @onclick="() => userList = userList.SortUsers(user => user.Company.Name ?? string.Empty)">Company</th>
+				<th class="clickable-header" style="cursor: pointer; border: 2px solid black;" @onclick="() => userList = userList.SortUsers(user => user.Company.CatchPhrase ?? string.Empty)">Company Catchphrase</th>
+				@if (dataRepoChoice == "2")
+				{
+					<th>Business Service</th>
+				}
+				</tr>
+		</thead>
+		<tbody>
+			@foreach (var user in allUsers ? filteredUsers : filteredUsers.Take(5))
+			{
+				<tr>
+					@if (dataRepoChoice == "2")
+					{
+						<td><button @onclick="() => RedirectToDoList(user.Id)">ToDo</button></td>
+					}
+					<td>@user.Id</td>
+					<td>@user.Name</td>
 
-			    @if (dataRepoChoice == "2")
-			    {
-				    <td>@user.Username</td>
-			    }
+					@if (dataRepoChoice == "2")
+					{
+						<td>@user.Username</td>
+					}
 
-			    <td>@user.Email</td>
-			    <td>@(user.Address?.Street ?? "N/A")</td>
-			    <td>@(user.Address?.City ?? "N/A")</td>
+					<td>@user.Email</td>
+					<td>@(user.Address?.Street ?? "N/A")</td>
+					<td>@(user.Address?.City ?? "N/A")</td>
 
-			    @if (dataRepoChoice == "2")
-			    {
-				    <td>@(user.Address?.Suite ?? "N/A")</td>
-				    <td>@(user.Address?.Geo?.Lat ?? "N/A")</td>
-				    <td>@(user.Address?.Geo?.Lng ?? "N/A")</td>
-			    }
+					@if (dataRepoChoice == "2")
+					{
+						<td>@(user.Address?.Suite ?? "N/A")</td>
+						<td>@(user.Address?.Geo?.Lat ?? "N/A")</td>
+						<td>@(user.Address?.Geo?.Lng ?? "N/A")</td>
+					}
 
-			    <td>@(user.Address?.ZipCode ?? "N/A")</td>
+					<td>@(user.Address?.ZipCode ?? "N/A")</td>
+					<td>@(user.Company?.Name ?? "N/A")</td>
+					<td>@(user.Company?.CatchPhrase ?? "Check your assumptions")</td>
+					@if (dataRepoChoice == "2")
+					{
+						<td>@(user.Company?.Bs ?? "N/A")</td>
+					}
+				</tr>
+			}
+		</tbody>
+	</table>
 
-			    @if (dataRepoChoice == "1" || dataRepoChoice == "3")
-			    {
-				    <td>@(user.Company?.Name ?? "N/A")</td>
-				    <td>@(user.Company?.CatchPhrase ?? "N/A")</td>
-			    }
-			    else if (dataRepoChoice == "2")
-			    {
-				    <td>@(user.Company?.Name ?? "N/A")</td>
-				    <td>@(user.Company?.CatchPhrase ?? "N/A")</td>
-				    <td>@(user.Company?.Bs ?? "N/A")</td>
-			    }
-		    </tr>
-	    }
-	    </tbody>
-    </table>
-    
 }
 <div style="display: flex; align-items: center; gap: 10px;">
-<button class="btn btn-primary" @onclick="ToggleListView">@btnMessage</button>
-	<select class="form-select" style="width: auto; max-width: 400px;" @onchange="SortUserList">
-		<option value="1">Sort users by name (Default)</option>
-		<option value="2">Sort users by company name</option>
-		<option value="3">Sort users by User ID</option>
-	</select>
+	<button class="btn btn-primary" @onclick="ToggleListView">@btnMessage</button>
 <select class="form-select" style="width: auto; max-width: 400px;" @onchange="ChangeUserList">
 	<option value="1">Fetch mock users (Default)</option>
 	<option value="2">Fetch users from API</option>

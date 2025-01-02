@@ -4,7 +4,7 @@ public partial class NewUser
 {
 	private User user = new();
 	private JsonDataRepository jsonRep = new();
-	private List<User>? users = new();
+	private List<User> users = new();
 	private int step = 1;
 	private bool formIsDone;
 	private bool userSaved;
@@ -65,8 +65,9 @@ public partial class NewUser
 
 	private void SaveUser()
 	{
-		user.Id = jsonRep.ApplyRandomId();
+		user.Id = jsonRep.ApplyRandomUniqueId();
 		jsonRep.SaveUserToJson(user);
+		users.Add(user);
 		ResetForm();
 		userSaved = true;
 	}

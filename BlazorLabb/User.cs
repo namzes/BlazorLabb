@@ -7,7 +7,7 @@ namespace BlazorLabb
 {
 	public class UserTodoHandler
 	{
-		public User user { get; set; } = new();
+		public User User { get; set; } = new();
 		public List<ToDo> ToDos { get; set; } = new();
 
 
@@ -20,21 +20,13 @@ namespace BlazorLabb
 		[StringLength(100, ErrorMessage = "Name can't be longer than 100 characters")]
 		public string? Name { get; set; }
 		[Required(ErrorMessage = "Email is required")]
-		[EmailAddress(ErrorMessage = "Must contain a valid email")]
+		[RegularExpression(@"^[^@\s]+@[^@\s]+\.[a-zA-Z]{2,3}$", ErrorMessage = "Must contain a valid email")]
 		public string? Email { get; set; }
 		public string? Username { get; set; }
 		public Address Address { get; set; } = new Address();
 		public Company Company { get; set; } = new Company();
 		public string? Phone { get; set; }
 		public string? Website { get; set; }
-		
-		public User()
-		{
-			
-		}
-
-
-
 	}
 
 

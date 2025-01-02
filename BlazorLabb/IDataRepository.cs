@@ -255,7 +255,7 @@ namespace BlazorLabb
 			{
 				using (var stream = File.OpenRead(GetFilePath()))
 				{
-					return users?.FirstOrDefault(user => user.Id == id) ?? new User();
+					return users?.GetUser(id) ?? new();
 				}
 			}
 			catch (FileNotFoundException)
@@ -295,11 +295,7 @@ namespace BlazorLabb
 		{
 			return fileName;
 		}
-		public int ApplyRandomId()
-		{
-			return CheckUniqueId();
-		}
-		private int CheckUniqueId()
+		public int ApplyRandomUniqueId()
 		{
 			Random random = new Random();
 			if (users == null)
@@ -310,26 +306,23 @@ namespace BlazorLabb
 			do
 			{
 				id = random.Next(1000, 10000);
-			} 
+			}
 			while (users.Any(user => user.Id == id));
 			return id;
-			
+
 		}
 
 	}
 	public static class DataRepoExtensions
 	{
-		public static List<User> SortById(this List<User> userList)
+		public static List<T> SortUsers<T>(this List<T> userList, Func<T, object> sortFunc)
 		{
-			return userList.OrderBy(user => user.Id).ToList();
-		}
-		public static List<User> SortByName(this List<User> userList)
-		{
-			return userList.OrderBy(user => user.Name).ToList();
-		}
-		public static List<User> SortByCompany(this List<User> userList)
-		{
-			return userList.OrderBy(user => user.Company.Name).ToList();
+				List<T> userAscending = userList.OrderBy(sortFunc).ToList();
+				if (userList.SequenceEqual(userAscending))
+				{
+					return userList.OrderByDescending(sortFunc).ToList();
+				}
+				return userList.OrderBy(sortFunc).ToList();
 		}
 		public static List<User> SearchByNameOrCompany(this List<User> userList, string search)
 		{

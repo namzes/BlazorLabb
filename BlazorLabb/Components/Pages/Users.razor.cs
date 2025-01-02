@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorLabb.Components.Pages;
 
@@ -16,7 +17,7 @@ public partial class Users
 	private string dataRepoChoice = "1";
 	private bool allUsers;
 	private string btnMessage = "Toggle Full List";
-	private string sortUserChoice = "1";
+	//private string sortUserChoice = "1";
     private bool jsonNotLoaded;
     private string jsonFileErrorMsg = "File does not exist!";
 	private IEnumerable<User> filteredUsers => userList.SearchByNameOrCompany(searchTerm);
@@ -24,7 +25,6 @@ public partial class Users
 	protected override async Task OnInitializedAsync()
 	{
 		userList = await localUserServices.GetUsersAsync();
-		SortUsersByName();
 		_ = SimulateLoading();
 	}
 
@@ -43,51 +43,52 @@ public partial class Users
 		StateHasChanged();
 	}
 
-	private void SortUsersByName()
-	{
-		userList = userList.SortByName();
-	}
+	//private void SortUserList(ChangeEventArgs e)
+	//{
+	//	sortUserChoice = e.Value?.ToString() ?? string.Empty;
+	//	if (int.TryParse(sortUserChoice, out var selectedSort))
+	//	{
+	//		switch (selectedSort)
+	//		{
+	//			case 1:
+	//				{
+	//					userList = userList.SortUsers(user => user.Id);
+	//					break;
+	//				}
+	//			case 2:
+	//				{
+	//					userList = userList.SortUsers(user => user.Name ?? string.Empty);
+	//					break;
+	//				}
+	//			case 3:
+	//				{
+	//					userList = userList.SortUsers(user => user.Company.Name ?? string.Empty);
+	//					break;
+	//				}
+	//			case 4:
+	//				{
+	//					userList = userList.SortUsers(user => user.Email ?? string.Empty);
+	//					break;
+	//				}
+	//			case 5:
+	//				{
+	//					userList = userList.SortUsers(user => user.Address.Street ?? string.Empty);
+	//					break;
+	//				}
+	//			case 6:
+	//				{
+	//					userList = userList.SortUsers(user => user.Address.City ?? string.Empty);
+	//					break;
+	//				}
+	//			default:
+	//				{
+	//					throw new ArgumentOutOfRangeException();
+	//				}
+	//		}
 
-	private void SortUsersByCompanyName()
-	{
-		userList = userList.SortByCompany();
-	}
-
-	private void SortUsersById()
-	{
-		userList = userList.SortById();
-	}
-
-	private void SortUserList(ChangeEventArgs e)
-	{
-		sortUserChoice = e.Value?.ToString() ?? string.Empty;
-		if (int.TryParse(sortUserChoice, out var selectedSort))
-		{
-			switch (selectedSort)
-			{
-				case 1:
-				{
-					SortUsersByName();
-					break;
-				}
-				case 2:
-				{
-					SortUsersByCompanyName();
-					break;
-				}
-				case 3:
-				{
-					SortUsersById();
-					break;
-				}
-				default:
-				{
-					throw new ArgumentOutOfRangeException();
-				}
-			}
-		}
-		StateHasChanged();
-	}
+	//	}
+	//	StateHasChanged();
+	//}
 
 	private async Task ChangeUserList(ChangeEventArgs e)
 	{

@@ -5,8 +5,7 @@ namespace BlazorLabb.Components.Pages;
 public partial class Todo
 {
 	[Parameter] public int userId { get; set; }
-
-	private UserTodoHandler userTodoHandler = new UserTodoHandler();
+	private UserTodoHandler userTodoHandler = new();
 	private ApiDataRepository apiDataRep;
 	private Dictionary<int, bool> collapsedState = new();
 
@@ -17,7 +16,7 @@ public partial class Todo
 
 	protected override async Task OnInitializedAsync()
 	{
-		userTodoHandler.user = apiDataRep.GetUser(userId);
+		userTodoHandler.User = apiDataRep.GetUser(userId);
 
 		userTodoHandler.ToDos = await apiDataRep.GetToDosAsync(userId);
 		foreach (var todo in userTodoHandler.ToDos)
